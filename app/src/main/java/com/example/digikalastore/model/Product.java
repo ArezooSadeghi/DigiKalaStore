@@ -1,9 +1,16 @@
 package com.example.digikalastore.model;
 
+import android.widget.ImageView;
+
+import androidx.databinding.BindingAdapter;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class Product {
+public class Product implements Serializable {
 
     private String mName;
     private String mId;
@@ -77,5 +84,10 @@ public class Product {
 
     public void setPrice(String price) {
         mPrice = price;
+    }
+
+    @BindingAdapter("productImage")
+    public static void loadImage(ImageView view, String url) {
+        Picasso.get().load(url).into(view);
     }
 }

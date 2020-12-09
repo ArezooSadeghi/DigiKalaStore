@@ -4,6 +4,9 @@
 
     <data>
 
+        <variable
+            name="product"
+            type="com.example.digikalastore.model.Product" />
     </data>
 
     <FrameLayout
@@ -25,6 +28,7 @@
 
                 <ImageView
                     android:id="@+id/img_product"
+                    productImage="@{product.imageUrl.get(0)}"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
                     android:layout_marginBottom="12dp" />
@@ -36,7 +40,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:layout_marginRight="16dp"
-                    android:lines="3" />
+                    android:lineSpacingMultiplier="1.2"
+                    android:lines="3"
+                    android:text="@{product.name}" />
 
             </LinearLayout>
 

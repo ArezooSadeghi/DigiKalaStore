@@ -3,6 +3,9 @@
 
     <data>
 
+        <variable
+            name="title"
+            type="String" />
     </data>
 
     <FrameLayout
@@ -16,7 +19,8 @@
             android:layout_height="200dp"
             android:layout_gravity="right"
             android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp" />
+            android:layout_marginRight="16dp"
+            android:text="@{title}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_product_title"

@@ -2,9 +2,7 @@ package com.example.digikalastore.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -23,11 +21,6 @@ public class TitleProductAdapter extends RecyclerView.Adapter<TitleProductAdapte
     private Context mContext;
     private List<String> mTitles;
     private List<Product> mProducts;
-
-    public TitleProductAdapter(Context context, List<String> titles) {
-        mContext = context;
-        mTitles = titles;
-    }
 
     public TitleProductAdapter(Context context, List<String> titles, List<Product> products) {
         mContext = context;
@@ -83,7 +76,7 @@ public class TitleProductAdapter extends RecyclerView.Adapter<TitleProductAdapte
         }
 
         public void bindTitle(String title) {
-            mBinding.txtTitle.setText(title);
+            mBinding.setTitle(title);
         }
     }
 

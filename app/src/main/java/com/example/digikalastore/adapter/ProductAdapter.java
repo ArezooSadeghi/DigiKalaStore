@@ -4,17 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.ProductTitleRecyclerViewItemBinding;
 import com.example.digikalastore.model.Product;
-import com.squareup.picasso.Picasso;
+import com.example.digikalastore.uicontroller.fragment.HomeFragmentDirections;
 
 import java.util.List;
 
@@ -50,6 +50,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     @Override
     public void onBindViewHolder(@NonNull ProductHolder holder, int position) {
         holder.bindProduct(mProducts.get(position));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavDirections action = HomeFragmentDirections
+                        .actionHomeFragmentToProductDetailFragment(holder.mBinding.getProduct());
+                Navigation.findNavController(view).navigate(action);
+            }
+        });
     }
 
     @Override
@@ -67,8 +75,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
         }
 
         public void bindProduct(Product product) {
-            Picasso.get().load(product.getImageUrl().get(0)).into(mBinding.imgProduct);
-            mBinding.txtProductName.setText(product.getName());
+            mBinding.setProduct(product);
         }
     }
 }

@@ -2,11 +2,14 @@ package com.example.digikalastore.uicontroller.activity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -43,6 +46,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
 
+        mNavController.addOnDestinationChangedListener(
+                new NavController.OnDestinationChangedListener() {
+                    @Override
+                    public void onDestinationChanged(
+                            @NonNull NavController controller,
+                            @NonNull NavDestination destination,
+                            @Nullable Bundle arguments) {
+                        if (destination.getId() == R.id.productDetailFragment) {
+                            mBinding.bottomNavigationView.setVisibility(View.GONE);
+                        }
+                    }
+                });
+    }
 }
