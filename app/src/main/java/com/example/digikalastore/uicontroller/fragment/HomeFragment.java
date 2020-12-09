@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.TitleProductAdapter;
+import com.example.digikalastore.databinding.FragmentHomeBinding;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.repository.ProductRepository;
 
@@ -19,7 +21,7 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private RecyclerView mTitleRecyclerView;
+    private FragmentHomeBinding mBinding;
     private ProductRepository mRepository;
 
     public HomeFragment() {
@@ -50,20 +52,19 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        mBinding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_home,
+                container,
+                false);
 
-        findViews(view);
         initViews();
 
-        return view;
-    }
-
-    private void findViews(View view) {
-        mTitleRecyclerView = view.findViewById(R.id.recycler_view_title);
+        return mBinding.getRoot();
     }
 
     private void initViews() {
-        mTitleRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mBinding.recyclerViewTitle.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     private void setupAdapter(List<Product> products) {
@@ -71,6 +72,6 @@ public class HomeFragment extends Fragment {
                 getContext(),
                 mRepository.getTitles(),
                 products);
-        mTitleRecyclerView.setAdapter(adapter);
+        mBinding.recyclerViewTitle.setAdapter(adapter);
     }
 }

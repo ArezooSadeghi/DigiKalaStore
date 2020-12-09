@@ -5,11 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.databinding.FragmentCategoryBinding;
 
 public class CategoryFragment extends Fragment {
+
+    private FragmentCategoryBinding mBinding;
 
     public CategoryFragment() {
     }
@@ -30,6 +34,11 @@ public class CategoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_category, container, false);
+        mBinding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_category,
+                container,
+                false);
+        return mBinding.getRoot();
     }
 }

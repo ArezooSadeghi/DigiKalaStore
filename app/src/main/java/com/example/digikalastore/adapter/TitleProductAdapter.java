@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.databinding.TitleRecyclerViewItemBinding;
 import com.example.digikalastore.model.Product;
 
 import java.util.List;
@@ -52,16 +54,18 @@ public class TitleProductAdapter extends RecyclerView.Adapter<TitleProductAdapte
     @NonNull
     @Override
     public TitleProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TitleProductHolder(LayoutInflater.from(mContext).inflate(
+        TitleRecyclerViewItemBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mContext),
                 R.layout.title_recycler_view_item,
                 parent,
-                false));
+                false);
+        return new TitleProductHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TitleProductHolder holder, int position) {
         holder.bindTitle(mTitles.get(position));
-        setProductTitleRecyclerView(holder.mProductTitleRecyclerView, mProducts);
+        setProductTitleRecyclerView(holder.mBinding.recyclerViewProductTitle, mProducts);
     }
 
     @Override
@@ -71,17 +75,15 @@ public class TitleProductAdapter extends RecyclerView.Adapter<TitleProductAdapte
 
     public class TitleProductHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTitle;
-        private RecyclerView mProductTitleRecyclerView;
+        private TitleRecyclerViewItemBinding mBinding;
 
-        public TitleProductHolder(@NonNull View itemView) {
-            super(itemView);
-            mTitle = itemView.findViewById(R.id.txt_title);
-            mProductTitleRecyclerView = itemView.findViewById(R.id.recycler_view_product_title);
+        public TitleProductHolder(TitleRecyclerViewItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
         public void bindTitle(String title) {
-            mTitle.setText(title);
+            mBinding.txtTitle.setText(title);
         }
     }
 

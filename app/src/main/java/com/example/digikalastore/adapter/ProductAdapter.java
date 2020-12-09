@@ -8,9 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.databinding.ProductTitleRecyclerViewItemBinding;
 import com.example.digikalastore.model.Product;
 import com.squareup.picasso.Picasso;
 
@@ -37,10 +39,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     @NonNull
     @Override
     public ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ProductHolder(LayoutInflater.from(mContext).inflate(
+        ProductTitleRecyclerViewItemBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mContext),
                 R.layout.product_title_recycler_view_item,
                 parent,
-                false));
+                false);
+        return new ProductHolder(binding);
     }
 
     @Override
@@ -55,18 +59,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
     public class ProductHolder extends RecyclerView.ViewHolder {
 
-        private ImageView mProductImage;
-        private TextView mProductName;
+        private ProductTitleRecyclerViewItemBinding mBinding;
 
-        public ProductHolder(@NonNull View itemView) {
-            super(itemView);
-            mProductImage = itemView.findViewById(R.id.img_product);
-            mProductName = itemView.findViewById(R.id.txt_product_name);
+        public ProductHolder(ProductTitleRecyclerViewItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
         }
 
         public void bindProduct(Product product) {
-            Picasso.get().load(product.getImageUrl().get(0)).into(mProductImage);
-            mProductName.setText(product.getName());
+            Picasso.get().load(product.getImageUrl().get(0)).into(mBinding.imgProduct);
+            mBinding.txtProductName.setText(product.getName());
         }
     }
 }
