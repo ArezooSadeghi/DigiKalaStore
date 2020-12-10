@@ -1,20 +1,25 @@
 package com.example.digikalastore.uicontroller.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.adapter.TitleProductAdapter;
+import com.example.digikalastore.adapter.CategoryProductAdapter;
 import com.example.digikalastore.databinding.FragmentHomeBinding;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.uicontroller.activity.MainActivity;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
 import java.util.List;
@@ -38,7 +43,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
         mViewModel.fetchProductAsync();
         setObserver();
     }
@@ -72,10 +77,19 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupAdapter(List<Product> products) {
-        TitleProductAdapter adapter = new TitleProductAdapter(
+        CategoryProductAdapter adapter = new CategoryProductAdapter(
                 getContext(),
                 mViewModel.getTitles(),
-                products);
+                products, new CategoryProductAdapter.CategoryItemClickedCallback() {
+            @Override
+            public void categoryItemClicked(String productId) {
+                HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
+                        HomeFragmentDirections.actionHomeFragmentToProductDetailFragment();
+                action.setProductId(productId);
+                NavHostFragment.findNavController(HomeFragment.this).navigate(action);
+                /*Navigation.findNavController(getView()).navigate(action);*/
+            }
+        });
         mBinding.recyclerViewTitle.setAdapter(adapter);
     }
 }

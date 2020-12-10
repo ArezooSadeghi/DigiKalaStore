@@ -1,5 +1,7 @@
 package com.example.digikalastore.uicontroller.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +17,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.ActivityMainBinding;
+import com.example.digikalastore.uicontroller.fragment.HomeFragment;
+import com.example.digikalastore.uicontroller.fragment.HomeFragmentDirections;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String EXTRA_PRODUCT_ID = "productId";
     private ActivityMainBinding mBinding;
     private NavController mNavController;
 
@@ -59,5 +64,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, MainActivity.class);
     }
 }

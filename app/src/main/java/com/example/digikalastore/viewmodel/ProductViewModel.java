@@ -39,4 +39,8 @@ public class ProductViewModel extends AndroidViewModel {
     public void fetchProductAsync() {
         mRepository.fetchProductAsync();
     }
+
+    public Product getProduct(String productId) {
+        return mRepository.getProduct(productId);
+    }
 }

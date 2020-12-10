@@ -7,14 +7,11 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.databinding.ProductTitleRecyclerViewItemBinding;
+import com.example.digikalastore.databinding.ProductCategoryRecyclerViewItemBinding;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.uicontroller.fragment.HomeFragmentDirections;
 
 import java.util.List;
 
@@ -22,10 +19,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
     private Context mContext;
     private List<Product> mProducts;
+    private ProductCategoryItemClickedCallbcak mCallbcak;
 
-    public ProductAdapter(Context context, List<Product> products) {
+    public ProductAdapter(Context context, List<Product> products, ProductCategoryItemClickedCallbcak callbcak) {
         mContext = context;
         mProducts = products;
+        mCallbcak = callbcak;
     }
 
     public List<Product> getProducts() {
@@ -39,9 +38,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     @NonNull
     @Override
     public ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ProductTitleRecyclerViewItemBinding binding = DataBindingUtil.inflate(
+        ProductCategoryRecyclerViewItemBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
-                R.layout.product_title_recycler_view_item,
+                R.layout.product_category_recycler_view_item,
                 parent,
                 false);
         return new ProductHolder(binding);
@@ -50,12 +49,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
     @Override
     public void onBindViewHolder(@NonNull ProductHolder holder, int position) {
         holder.bindProduct(mProducts.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavDirections action = HomeFragmentDirections
-                        .actionHomeFragmentToProductDetailFragment(holder.mBinding.getProduct());
-                Navigation.findNavController(view).navigate(action);
+                mCallbcak.productCategoryItemClicked(mProducts.get(position).getId());
             }
         });
     }
@@ -67,9 +64,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
 
     public class ProductHolder extends RecyclerView.ViewHolder {
 
-        private ProductTitleRecyclerViewItemBinding mBinding;
+        private ProductCategoryRecyclerViewItemBinding mBinding;
 
-        public ProductHolder(ProductTitleRecyclerViewItemBinding binding) {
+        public ProductHolder(ProductCategoryRecyclerViewItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }
@@ -77,5 +74,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductH
         public void bindProduct(Product product) {
             mBinding.setProduct(product);
         }
+    }
+
+    public interface ProductCategoryItemClickedCallbcak {
+        void productCategoryItemClicked(String productId);
     }
 }

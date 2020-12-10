@@ -23,6 +23,7 @@ public class ProductRepository {
 
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private List<String> mTitles;
+    private List<Product> mProducts;
     private static ProductRepository sInstance;
     private DigiKalaService mDigiKalaService;
     private Context mContext;
@@ -61,6 +62,7 @@ public class ProductRepository {
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                mProducts = response.body();
                 mProductsLiveData.setValue(response.body());
             }
 
@@ -69,5 +71,14 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
+    }
+
+    public Product getProduct(String productId) {
+        for (Product product:mProducts) {
+            if (product.getId().equals(productId)) {
+                return product;
+            }
+        }
+        return null;
     }
 }
