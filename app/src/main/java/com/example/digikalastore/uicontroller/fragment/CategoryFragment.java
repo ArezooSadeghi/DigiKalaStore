@@ -7,13 +7,18 @@ import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.adapter.CategoryProductAdapter;
 import com.example.digikalastore.databinding.FragmentCategoryBinding;
+import com.example.digikalastore.viewmodel.ProductViewModel;
 
 public class CategoryFragment extends Fragment {
 
     private FragmentCategoryBinding mBinding;
+    private ProductViewModel mViewModel;
 
     public CategoryFragment() {
     }
@@ -28,6 +33,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
     }
 
     @Override
@@ -39,6 +45,23 @@ public class CategoryFragment extends Fragment {
                 R.layout.fragment_category,
                 container,
                 false);
+
+        initViews();
+        setupAdapter();
+
         return mBinding.getRoot();
+    }
+
+    public void initViews() {
+        mBinding.recyclerViewCategoryList.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void setupAdapter() {
+        CategoryProductAdapter adapter = new CategoryProductAdapter(
+                getContext(),
+                mViewModel.getCategories(),
+                mViewModel.getProducts(),
+                2);
+        mBinding.recyclerViewCategoryList.setAdapter(adapter);
     }
 }

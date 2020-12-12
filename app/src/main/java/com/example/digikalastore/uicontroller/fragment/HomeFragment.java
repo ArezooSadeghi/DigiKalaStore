@@ -79,15 +79,13 @@ public class HomeFragment extends Fragment {
     private void setupAdapter(List<Product> products) {
         CategoryProductAdapter adapter = new CategoryProductAdapter(
                 getContext(),
-                mViewModel.getTitles(),
-                products, new CategoryProductAdapter.CategoryItemClickedCallback() {
+                mViewModel.getCategories(), mViewModel.getProducts() ,1, new CategoryProductAdapter.CategoryItemClickedCallback() {
             @Override
             public void categoryItemClicked(String productId) {
                 HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
                         HomeFragmentDirections.actionHomeFragmentToProductDetailFragment();
                 action.setProductId(productId);
                 NavHostFragment.findNavController(HomeFragment.this).navigate(action);
-                /*Navigation.findNavController(getView()).navigate(action);*/
             }
         });
         mBinding.recyclerViewTitle.setAdapter(adapter);

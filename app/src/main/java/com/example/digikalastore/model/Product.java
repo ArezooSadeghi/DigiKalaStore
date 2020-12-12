@@ -8,32 +8,23 @@ import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public class Product implements Serializable {
 
     private String mName;
     private String mId;
     private List<String> mImageUrl;
-    private Map<String, String> mCategory;
     private String mDescription;
     private String mPrice;
+    private List<Category> mCategory;
 
     public Product() {
     }
 
-    public Product(
-            String name,
-            String id,
-            List<String> imageUrl,
-            Map<String, String> category,
-            String description,
-            String price) {
-
+    public Product(String name, String id, List<String> imageUrl, String description, String price) {
         mName = name;
         mId = id;
         mImageUrl = imageUrl;
-        mCategory = category;
         mDescription = description;
         mPrice = price;
     }
@@ -62,14 +53,6 @@ public class Product implements Serializable {
         mImageUrl = imageUrl;
     }
 
-    public Map<String, String> getCategory() {
-        return mCategory;
-    }
-
-    public void setCategory(Map<String, String> category) {
-        mCategory = category;
-    }
-
     public String getDescription() {
         return mDescription;
     }
@@ -84,6 +67,14 @@ public class Product implements Serializable {
 
     public void setPrice(String price) {
         mPrice = price;
+    }
+
+    public List<Category> getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(List<Category> category) {
+        mCategory = category;
     }
 
     @BindingAdapter("productImage")

@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.repository.ProductRepository;
 
@@ -14,14 +15,19 @@ import java.util.List;
 public class ProductViewModel extends AndroidViewModel {
 
     private LiveData<List<Product>> mProductsLiveData;
-    private List<String> mTitles;
     private ProductRepository mRepository;
+    private List<Product> mProducts;
+    private List<String> mTitles;
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
         mRepository = ProductRepository.getInstance(getApplication());
         mProductsLiveData = mRepository.getProductsLiveData();
         mTitles = mRepository.getTitles();
+    }
+
+    public List<Product> getProducts() {
+        return mRepository.getProducts();
     }
 
     public LiveData<List<Product>> getProductsLiveData() {
@@ -42,5 +48,13 @@ public class ProductViewModel extends AndroidViewModel {
 
     public Product getProduct(String productId) {
         return mRepository.getProduct(productId);
+    }
+
+    public List<Category> getCategories() {
+        return mRepository.getCategories();
+    }
+
+    public List<Product> getProductsByCategory(String categoryId) {
+        return mRepository.getProductsByCategory(categoryId);
     }
 }

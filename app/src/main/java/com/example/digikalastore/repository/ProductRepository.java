@@ -6,12 +6,15 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.retrofit.DigiKalaService;
 import com.example.digikalastore.retrofit.RetrofitInstance;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,6 +48,14 @@ public class ProductRepository {
         return sInstance;
     }
 
+    public List<Product> getProducts() {
+        return mProducts;
+    }
+
+    public void setProducts(List<Product> products) {
+        mProducts = products;
+    }
+
     public MutableLiveData<List<Product>> getProductsLiveData() {
         return mProductsLiveData;
     }
@@ -74,11 +85,56 @@ public class ProductRepository {
     }
 
     public Product getProduct(String productId) {
-        for (Product product:mProducts) {
+        for (Product product : mProducts) {
             if (product.getId().equals(productId)) {
                 return product;
             }
         }
         return null;
+    }
+
+   /* public List<Category> getCategories() {
+        List<Category> categories = new ArrayList<>();
+        *//* for (int i = 0; i < mProducts.size(); i++) {
+     *//**//*if (mProducts.get(i).getCategories().get(i).)*//**//*
+
+        }*//*
+
+     *//*for (Product product:mProducts) {
+            for (int i = 0; i < product.getCategories().size(); i++) {
+                if (ca)
+
+            }
+
+        }*//*
+        Set<Category> categorySet = new HashSet<>(categories);
+        categories.clear();
+        categories.addAll(categorySet);
+        return categories;
+    }
+*/
+
+    public List<Product> getProductsByCategory(String categoryId) {
+        List<Product> products = new ArrayList<>();
+        for (Product product : mProducts) {
+            for (Category category : product.getCategory()) {
+                if (category.getId().equals(categoryId)) {
+                    products.add(product);
+                }
+            }
+        }
+        return products;
+    }
+
+    public List<Category> getCategories() {
+        Map<String, Category> hashMap = new HashMap<>();
+        for (Product product : mProducts) {
+            for (Category category : product.getCategory()) {
+                hashMap.put(category.getId(), category);
+            }
+        }
+
+        List<Category> categories = new ArrayList<>(hashMap.values());
+        return categories;
     }
 }

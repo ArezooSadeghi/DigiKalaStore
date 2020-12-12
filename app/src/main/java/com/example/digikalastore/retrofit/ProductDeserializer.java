@@ -1,7 +1,9 @@
 package com.example.digikalastore.retrofit;
 
 import android.text.Html;
+import android.util.Log;
 
+import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -12,9 +14,7 @@ import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProductDeserializer implements JsonDeserializer<List<Product>> {
 
@@ -24,39 +24,49 @@ public class ProductDeserializer implements JsonDeserializer<List<Product>> {
             Type typeOfT,
             JsonDeserializationContext context) throws JsonParseException {
 
-        List<Product> productList = new ArrayList<>();
-        JsonArray bodyArray = json.getAsJsonArray();
+        List<Product> products = new ArrayList<>();
 
+        JsonArray bodyArray = json.getAsJsonArray();
         for (int i = 0; i < bodyArray.size(); i++) {
             JsonObject productObject = bodyArray.get(i).getAsJsonObject();
 
-            String id = productObject.get("id").getAsString();
-            String name = productObject.get("name").getAsString();
-            String price = productObject.get("price").getAsString();
-            String description = Html.fromHtml(
+            String productId = productObject.get("id").getAsString();
+            String productName = productObject.get("name").getAsString();
+            String productPrice = productObject.get("price").getAsString();
+            String productDescription = Html.fromHtml(
                     productObject.get("description").getAsString()).toString();
 
-            JsonArray categories = productObject.get("categories").getAsJsonArray();
-            Map<String, String> category = new HashMap<>();
-
-            for (int j = 0; j < categories.size(); j++) {
-                JsonObject productCategory = categories.get(j).getAsJsonObject();
-                category.put(
-                        productCategory.get("id").getAsString(),
-                        productCategory.get("name").getAsString());
-            }
-
             JsonArray images = productObject.get("images").getAsJsonArray();
-            List<String> imageUrl = new ArrayList<>();
+            List<String> productImageUrls = new ArrayList<>();
 
             for (int j = 0; j < images.size(); j++) {
-                JsonObject productImage = images.get(j).getAsJsonObject();
-                imageUrl.add(productImage.get("src").getAsString());
+                JsonObject imageObject = images.get(j).getAsJsonObject();
+                productImageUrls.add(imageObject.get("src").getAsString());
             }
 
-            Product product = new Product(name, id, imageUrl, category, description, price);
-            productList.add(product);
+            Product product = new Product(
+                    productName,
+                    productId,
+                    productImageUrls,
+                    productDescription,
+                    productPrice);
+
+            JsonArray categories = productObject.get("categories").getAsJsonArray();
+            List<Category> productCategories = new ArrayList<>();
+
+            for (int j = 0; j < categories.size(); j++) {
+                List<Product> categoryProduct = new ArrayList<>();
+                JsonObject categoryObject = categories.get(j).getAsJsonObject();
+                String categoryId = categoryObject.get("id").getAsString();
+                String categoryName = categoryObject.get("name").getAsString();
+                Category category = new Category(categoryName, categoryId);
+                productCategories.add(category);
+                categoryProduct.add(product);
+            }
+
+            product.setCategory(productCategories);
+            products.add(product);
         }
-        return productList;
+        return products;
     }
 }
