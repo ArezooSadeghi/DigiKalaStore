@@ -17,13 +17,12 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.ActivityMainBinding;
-import com.example.digikalastore.uicontroller.fragment.HomeFragment;
-import com.example.digikalastore.uicontroller.fragment.HomeFragmentDirections;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_PRODUCT_ID = "productId";
+
     private ActivityMainBinding mBinding;
     private NavController mNavController;
 

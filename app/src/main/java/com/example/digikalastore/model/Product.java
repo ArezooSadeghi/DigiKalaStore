@@ -7,6 +7,7 @@ import androidx.databinding.BindingAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Product implements Serializable {
@@ -17,16 +18,44 @@ public class Product implements Serializable {
     private String mDescription;
     private String mPrice;
     private List<Category> mCategory;
+    private ArrayList<Tag> mTags;
+    private String mAverageRate;
+    private String mStockStatus;
 
     public Product() {
     }
 
-    public Product(String name, String id, List<String> imageUrl, String description, String price) {
+    public Product(String name, String id, List<String> imageUrl, String description, String price, String AverageRate) {
         mName = name;
         mId = id;
         mImageUrl = imageUrl;
         mDescription = description;
         mPrice = price;
+        mAverageRate = AverageRate;
+    }
+
+    public String getAverageRate() {
+        return mAverageRate;
+    }
+
+    public String getStockStatus() {
+        return mStockStatus;
+    }
+
+    public void setStockStatus(String stockStatus) {
+        mStockStatus = stockStatus;
+    }
+
+    public void setAverageRate(String averageRate) {
+        mAverageRate = averageRate;
+    }
+
+    public ArrayList<Tag> getTags() {
+        return mTags;
+    }
+
+    public void setTags(ArrayList<Tag> tags) {
+        mTags = tags;
     }
 
     public String getName() {

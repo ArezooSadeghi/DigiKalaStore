@@ -25,6 +25,7 @@ public class ProductRepository {
     public static final String TAG = "ProductRepository";
 
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
     private List<String> mTitles;
     private List<Product> mProducts;
     private static ProductRepository sInstance;
@@ -60,12 +61,31 @@ public class ProductRepository {
         return mProductsLiveData;
     }
 
+    public MutableLiveData<List<Product>> getSearchingProductsLiveData() {
+        return mSearchingProductsLiveData;
+    }
+
     public List<String> getTitles() {
         return mTitles;
     }
 
     public void setTitles(List<String> titles) {
         mTitles = titles;
+    }
+
+    public void fetchSearchingProductsAsync(String query) {
+        Call<List<Product>> call = mDigiKalaService.serarchProduct(query);
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                mSearchingProductsLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
     }
 
     public void fetchProductAsync() {
@@ -92,27 +112,6 @@ public class ProductRepository {
         }
         return null;
     }
-
-   /* public List<Category> getCategories() {
-        List<Category> categories = new ArrayList<>();
-        *//* for (int i = 0; i < mProducts.size(); i++) {
-     *//**//*if (mProducts.get(i).getCategories().get(i).)*//**//*
-
-        }*//*
-
-     *//*for (Product product:mProducts) {
-            for (int i = 0; i < product.getCategories().size(); i++) {
-                if (ca)
-
-            }
-
-        }*//*
-        Set<Category> categorySet = new HashSet<>(categories);
-        categories.clear();
-        categories.addAll(categorySet);
-        return categories;
-    }
-*/
 
     public List<Product> getProductsByCategory(String categoryId) {
         List<Product> products = new ArrayList<>();

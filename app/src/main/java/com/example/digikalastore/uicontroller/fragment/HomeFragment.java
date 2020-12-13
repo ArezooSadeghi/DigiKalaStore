@@ -3,10 +3,14 @@ package com.example.digikalastore.uicontroller.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -42,6 +46,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
         mViewModel.fetchProductAsync();
@@ -58,9 +63,28 @@ public class HomeFragment extends Fragment {
                 container,
                 false);
 
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarHome);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
+
         initViews();
 
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_search:
+                getActivity().onSearchRequested();
+                return true;
+            default:
+                return false;
+        }
     }
 
     private void setObserver() {
@@ -79,15 +103,18 @@ public class HomeFragment extends Fragment {
     private void setupAdapter(List<Product> products) {
         CategoryProductAdapter adapter = new CategoryProductAdapter(
                 getContext(),
-                mViewModel.getCategories(), mViewModel.getProducts() ,1, new CategoryProductAdapter.CategoryItemClickedCallback() {
-            @Override
-            public void categoryItemClicked(String productId) {
-                HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
-                        HomeFragmentDirections.actionHomeFragmentToProductDetailFragment();
-                action.setProductId(productId);
-                NavHostFragment.findNavController(HomeFragment.this).navigate(action);
-            }
-        });
+                mViewModel.getCategories(),
+                mViewModel.getProducts(),
+                1,
+                new CategoryProductAdapter.CategoryItemClickedCallback() {
+                    @Override
+                    public void categoryItemClicked(String productId) {
+                        HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
+                                HomeFragmentDirections.actionHomeFragmentToProductDetailFragment();
+                        action.setProductId(productId);
+                        NavHostFragment.findNavController(HomeFragment.this).navigate(action);
+                    }
+                });
         mBinding.recyclerViewTitle.setAdapter(adapter);
     }
 }

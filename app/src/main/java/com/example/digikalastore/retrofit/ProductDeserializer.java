@@ -1,10 +1,10 @@
 package com.example.digikalastore.retrofit;
 
 import android.text.Html;
-import android.util.Log;
 
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Tag;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -32,7 +32,7 @@ public class ProductDeserializer implements JsonDeserializer<List<Product>> {
 
             String productId = productObject.get("id").getAsString();
             String productName = productObject.get("name").getAsString();
-            String productPrice = productObject.get("price").getAsString();
+            String productPrice = Html.fromHtml(productObject.get("price_html").getAsString()).toString();
             String productDescription = Html.fromHtml(
                     productObject.get("description").getAsString()).toString();
 
@@ -44,12 +44,16 @@ public class ProductDeserializer implements JsonDeserializer<List<Product>> {
                 productImageUrls.add(imageObject.get("src").getAsString());
             }
 
+            String productAverageRating = productObject.get("average_rating").getAsString();
+            String productStockStatus = productObject.get("stock_status").getAsString();
+
             Product product = new Product(
                     productName,
                     productId,
                     productImageUrls,
                     productDescription,
-                    productPrice);
+                    productPrice,
+                    productAverageRating);
 
             JsonArray categories = productObject.get("categories").getAsJsonArray();
             List<Category> productCategories = new ArrayList<>();
@@ -64,7 +68,19 @@ public class ProductDeserializer implements JsonDeserializer<List<Product>> {
                 categoryProduct.add(product);
             }
 
+            JsonArray tags = productObject.get("tags").getAsJsonArray();
+            ArrayList<Tag> productTags = new ArrayList<>();
+            for (int j = 0; j < tags.size(); j++) {
+                JsonObject tagObject = tags.get(j).getAsJsonObject();
+                String tagName = tagObject.get("name").getAsString();
+                String tagId = tagObject.get("id").getAsString();
+                Tag tag = new Tag(tagId, tagName);
+                productTags.add(tag);
+            }
+
             product.setCategory(productCategories);
+            product.setTags(productTags);
+            product.setStockStatus(productStockStatus);
             products.add(product);
         }
         return products;
