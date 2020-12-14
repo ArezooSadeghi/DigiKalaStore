@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -11,12 +12,71 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="right"
-            android:text="@string/search_result" />
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/lightgray"
+                    android:minHeight="?attr/actionBarSize"
+                    android:theme="?attr/actionBarTheme">
+
+                    <TextView
+                        android:id="@+id/txt_toolbar_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="16dp"
+                        android:gravity="right" />
+                </androidx.appcompat.widget.Toolbar>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white">
+
+                    <Button
+                        android:id="@+id/btn_related"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/related"
+                        app:icon="@drawable/ic_sort">
+
+                    </Button>
+
+                    <Button
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="5dp"
+                        android:text="@string/filter"
+                        app:icon="@drawable/ic_filter" />
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <ExpandableListView
+                android:id="@+id/expandable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@android:color/darker_gray"
+                android:background="@color/white"
+                android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft" />
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <ListView
             android:id="@+id/list_view_result_search"

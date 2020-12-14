@@ -63,9 +63,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        handleIntent();
     }
 
     public static Intent newIntent(Context context) {
         return new Intent(context, MainActivity.class);
+    }
+
+    public void handleIntent() {
+        Intent intent = getIntent();
     }
 }
