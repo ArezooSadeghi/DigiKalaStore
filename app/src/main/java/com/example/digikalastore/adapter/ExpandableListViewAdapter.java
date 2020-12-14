@@ -17,11 +17,17 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
     private Context mContext;
     private ArrayList<String> mGroupList;
     private HashMap<String, ArrayList<String>> mChildList;
+    private SetItemClickListener mListener;
 
-    public ExpandableListViewAdapter(Context context, ArrayList<String> groupList, HashMap<String, ArrayList<String>> childList) {
+    public ExpandableListViewAdapter(Context context, ArrayList<String> groupList, HashMap<String, ArrayList<String>> childList, SetItemClickListener listener) {
         mContext = context;
         mGroupList = groupList;
         mChildList = childList;
+        mListener = listener;
+    }
+
+    public void setListener(SetItemClickListener listener) {
+        mListener = listener;
     }
 
     @Override
@@ -79,11 +85,23 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
                 false);
         TextView textView = view.findViewById(R.id.txt_child_group);
         textView.setText(String.valueOf(getChild(i, i1)));
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.itemClicked(textView.getText().toString());
+            }
+        });
+
         return view;
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
         return false;
+    }
+
+    public interface SetItemClickListener {
+        void itemClicked(String text);
     }
 }

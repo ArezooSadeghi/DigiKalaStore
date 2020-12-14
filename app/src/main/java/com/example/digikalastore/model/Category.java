@@ -1,12 +1,9 @@
 package com.example.digikalastore.model;
 
-public class Category implements Comparable{
+public class Category {
 
     private String mName;
     private String mId;
-
-    public Category() {
-    }
 
     public Category(String name, String id) {
         mName = name;
@@ -14,7 +11,6 @@ public class Category implements Comparable{
     }
 
     public String getName() {
-
         return mName;
     }
 
@@ -28,10 +24,5 @@ public class Category implements Comparable{
 
     public void setId(String id) {
         mId = id;
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        return 0;
     }
 }

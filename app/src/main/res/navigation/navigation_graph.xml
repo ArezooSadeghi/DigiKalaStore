@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_categoryFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_allCategoryProductsFragment"
+            app:destination="@id/allCategoryProductsFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
@@ -35,5 +38,15 @@
             android:name="productId"
             app:argType="string"
             android:defaultValue="No productId exist" />
+    </fragment>
+    <fragment
+        android:id="@+id/allCategoryProductsFragment"
+        android:name="com.example.digikalastore.AllCategoryProductsFragment"
+        android:label="fragment_all_category_products"
+        tools:layout="@layout/fragment_all_category_products">
+        <argument
+            android:name="productId"
+            app:argType="string"
+            android:defaultValue="No productId exist"/>
     </fragment>
 </navigation>

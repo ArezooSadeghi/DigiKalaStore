@@ -12,13 +12,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.adapter.CategoryProductAdapter;
+import com.example.digikalastore.adapter.CategoryAdapter;
 import com.example.digikalastore.databinding.FragmentCategoryBinding;
+import com.example.digikalastore.model.Category;
 import com.example.digikalastore.viewmodel.ProductViewModel;
+
+import java.util.List;
 
 public class CategoryFragment extends Fragment {
 
@@ -41,6 +47,9 @@ public class CategoryFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        mViewModel.fetchCategories();
+
+        setObserver();
     }
 
     @Override
@@ -53,11 +62,8 @@ public class CategoryFragment extends Fragment {
                 container,
                 false);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarCategory);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
-
+        setToolBar();
         initViews();
-        setupAdapter();
 
         return mBinding.getRoot();
     }
@@ -78,16 +84,40 @@ public class CategoryFragment extends Fragment {
         }
     }
 
-    public void initViews() {
-        mBinding.recyclerViewCategoryList.setLayoutManager(new LinearLayoutManager(getContext()));
+    private void setObserver() {
+        mViewModel.getCategoryLiveData().observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(List<Category> categories) {
+                setupAdapter(categories);
+            }
+        });
     }
 
-    public void setupAdapter() {
-        CategoryProductAdapter adapter = new CategoryProductAdapter(
+    private void setToolBar() {
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarCategory);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
+    }
+
+    public void initViews() {
+        mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    public void setupAdapter(List<Category> categories) {
+
+        CategoryAdapter adapter = new CategoryAdapter(
+                2,
                 getContext(),
-                mViewModel.getCategories(),
+                categories,
                 mViewModel.getProducts(),
-                2);
-        mBinding.recyclerViewCategoryList.setAdapter(adapter);
+                new CategoryAdapter.SetItemClickListener() {
+            @Override
+            public void ItemClicked(String categoryId) {
+                CategoryFragmentDirections.ActionCategoryFragmentToAllCategoryProductsFragment action =
+                        CategoryFragmentDirections.actionCategoryFragmentToAllCategoryProductsFragment();
+                action.setProductId(categoryId);
+                NavHostFragment.findNavController(CategoryFragment.this).navigate(action);
+            }
+        });
+        mBinding.recyclerViewCategory.setAdapter(adapter);
     }
 }

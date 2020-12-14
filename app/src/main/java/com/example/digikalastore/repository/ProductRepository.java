@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.retrofit.CategoryListDeserializer;
 import com.example.digikalastore.retrofit.DigiKalaService;
+import com.example.digikalastore.retrofit.ProductListDeserializer;
 import com.example.digikalastore.retrofit.RetrofitInstance;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,14 +29,25 @@ public class ProductRepository {
 
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
     private List<String> mTitles;
     private List<Product> mProducts;
     private static ProductRepository sInstance;
-    private DigiKalaService mDigiKalaService;
+    private DigiKalaService mDigiKalaServiceProduct;
+    private DigiKalaService mDigiKalaServiceCategory;
     private Context mContext;
 
     private ProductRepository(Context context) {
-        mDigiKalaService = RetrofitInstance.getInstance().create(DigiKalaService.class);
+        mDigiKalaServiceProduct = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Product>>() {
+                }.getType(),
+                new ProductListDeserializer()).create(DigiKalaService.class);
+
+        mDigiKalaServiceCategory = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Category>>() {
+                }.getType(),
+                new CategoryListDeserializer()).create(DigiKalaService.class);
+
         mContext = context.getApplicationContext();
         mTitles = new ArrayList<String>() {{
             add(mContext.getResources().getString(R.string.best_product_title));
@@ -61,6 +75,10 @@ public class ProductRepository {
         return mProductsLiveData;
     }
 
+    public MutableLiveData<List<Category>> getCategoryLiveData() {
+        return mCategoryLiveData;
+    }
+
     public MutableLiveData<List<Product>> getSearchingProductsLiveData() {
         return mSearchingProductsLiveData;
     }
@@ -73,8 +91,23 @@ public class ProductRepository {
         mTitles = titles;
     }
 
+    public void fetchCategories() {
+        Call<List<Category>> call = mDigiKalaServiceCategory.getCategories();
+        call.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                mCategoryLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+    }
+
     public void fetchSearchingProductsAsync(String query) {
-        Call<List<Product>> call = mDigiKalaService.serarchProduct(query);
+        Call<List<Product>> call = mDigiKalaServiceProduct.serarchProduct(query);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -89,7 +122,7 @@ public class ProductRepository {
     }
 
     public void fetchProductAsync() {
-        Call<List<Product>> call = mDigiKalaService.getProductList();
+        Call<List<Product>> call = mDigiKalaServiceProduct.getProductList();
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {

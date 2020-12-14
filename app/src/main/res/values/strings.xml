@@ -16,4 +16,6 @@
     <string name="search_result">نتایج جستجو </string>
     <string name="filter">فیلترها</string>
     <string name="related">مرتبط ترین</string>
+    <string name="currency">تومان</string>
+    <string name="see_all_product">مشاهده همه</string>
 </resources>

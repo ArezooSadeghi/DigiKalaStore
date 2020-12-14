@@ -3,6 +3,7 @@ package com.example.digikalastore.uicontroller.activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
@@ -64,7 +65,12 @@ public class SearchableActivity extends AppCompatActivity {
         mBinding.btnRelated.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ExpandableListViewAdapter adapter = new ExpandableListViewAdapter(SearchableActivity.this, mParentList, mChildList);
+                ExpandableListViewAdapter adapter = new ExpandableListViewAdapter(SearchableActivity.this, mParentList, mChildList, new ExpandableListViewAdapter.SetItemClickListener() {
+                    @Override
+                    public void itemClicked(String text) {
+                        /*mViewModel.fetchNewestProductsAsync(text, "2");*/
+                    }
+                });
                 mBinding.expandable.setAdapter(adapter);
             }
         });
@@ -97,8 +103,17 @@ public class SearchableActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Product> products) {
                 setupAdapter(products);
+                Log.d("Arezoo", "comeOne");
             }
         });
+
+       /* mViewModel.getNewestProductsLiveData().observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> products) {
+                setupAdapter(products);
+                Log.d("Arezoo", "comeTwo");
+            }
+        });*/
     }
 
     private void handleIntent() {

@@ -2,6 +2,7 @@ package com.example.digikalastore.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -18,62 +19,61 @@ import com.example.digikalastore.model.Product;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProductAdapter.CategoryProductHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryHolder> {
 
     public static final int SPAN_COUNT = 3;
 
     private int mViewType;
     private Context mContext;
-    private List<Category> mCategory;
+    private List<Category> mCategories;
     private List<Product> mProducts;
     private CategoryItemClickedCallback mCallback;
+    private SetItemClickListener mListener;
 
-    public CategoryProductAdapter(
+    public CategoryAdapter(
             Context context,
-            List<Category> category,
+            List<Category> categories,
             List<Product> products,
             int viewType,
             CategoryItemClickedCallback callback) {
 
         mContext = context;
-        mCategory = category;
+        mCategories = categories;
         mProducts = products;
         mCallback = callback;
         mViewType = viewType;
     }
 
-    public CategoryProductAdapter(
+    public CategoryAdapter(
             Context context,
-            List<Category> category,
+            List<Category> categories,
             List<Product> products,
             int viewType) {
 
         mContext = context;
-        mCategory = category;
+        mCategories = categories;
         mProducts = products;
         mViewType = viewType;
     }
 
-    public List<Category> getCategory() {
-        return mCategory;
-    }
+    public CategoryAdapter(
+            int viewType,
+            Context context,
+            List<Category> categories,
+            List<Product> products,
+            SetItemClickListener listener) {
 
-    public void setCategory(List<Category> category) {
-        mCategory = category;
-    }
-
-    public List<Product> getProducts() {
-        return mProducts;
-    }
-
-    public void setProducts(List<Product> products) {
+        mViewType = viewType;
+        mContext = context;
+        mCategories = categories;
         mProducts = products;
+        mListener = listener;
     }
 
     @NonNull
     @Override
-    public CategoryProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new CategoryProductHolder(DataBindingUtil.inflate(
+    public CategoryHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new CategoryHolder(DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
                 R.layout.category_recycler_view_item,
                 parent,
@@ -81,27 +81,38 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryProductHolder holder, int position) {
-        holder.bindCategory(mCategory.get(position));
+    public void onBindViewHolder(@NonNull CategoryHolder holder, int position) {
+        holder.bindCategory(mCategories.get(position));
         if (mViewType == 1) {
-            setProductTitleRecyclerViewTypeOne(holder.mBinding.recyclerViewProductTitle, getProducts(mCategory.get(position).getId()));
+            setProductRecyclerViewTypeOne(
+                    holder.mBinding.recyclerViewProductCategory,
+                    getProducts(mCategories.get(position).getId()));
         } else {
-            setProductTitleRecyclerViewTypeTwo(holder.mBinding.recyclerViewProductTitle, getProducts(mCategory.get(position).getId()));
+            setProductRecyclerViewTypeTwo(
+                    holder.mBinding.recyclerViewProductCategory,
+                    getProducts(mCategories.get(position).getId()));
         }
     }
 
     @Override
     public int getItemCount() {
-        return mCategory.size();
+        return mCategories.size();
     }
 
-    public class CategoryProductHolder extends RecyclerView.ViewHolder {
+    public class CategoryHolder extends RecyclerView.ViewHolder {
 
         private CategoryRecyclerViewItemBinding mBinding;
 
-        public CategoryProductHolder(CategoryRecyclerViewItemBinding binding) {
+        public CategoryHolder(CategoryRecyclerViewItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
+
+            mBinding.btnSeeAllProduct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mListener.ItemClicked(mBinding.getCategory().getId());
+                }
+            });
         }
 
         public void bindCategory(Category category) {
@@ -109,7 +120,7 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
         }
     }
 
-    public void setProductTitleRecyclerViewTypeOne(RecyclerView recyclerView, List<Product> products) {
+    public void setProductRecyclerViewTypeOne(RecyclerView recyclerView, List<Product> products) {
         recyclerView.setLayoutManager(new GridLayoutManager(
                 mContext,
                 SPAN_COUNT,
@@ -126,7 +137,7 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
         recyclerView.setAdapter(adapter);
     }
 
-    public void setProductTitleRecyclerViewTypeTwo(RecyclerView recyclerView, List<Product> products) {
+    public void setProductRecyclerViewTypeTwo(RecyclerView recyclerView, List<Product> products) {
         recyclerView.setLayoutManager(new LinearLayoutManager(
                 mContext,
                 LinearLayoutManager.HORIZONTAL,
@@ -140,10 +151,14 @@ public class CategoryProductAdapter extends RecyclerView.Adapter<CategoryProduct
         void categoryItemClicked(String productId);
     }
 
+    public interface SetItemClickListener {
+        void ItemClicked(String categoryId);
+    }
+
     public List<Product> getProducts(String categoryId) {
         List<Product> products = new ArrayList<>();
-        for (Product product:mProducts) {
-            for (Category category:product.getCategory()) {
+        for (Product product : mProducts) {
+            for (Category category : product.getCategory()) {
                 if (category.getId().equals(categoryId)) {
                     products.add(product);
                 }

@@ -16,7 +16,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDeserializer implements JsonDeserializer<List<Product>> {
+public class ProductListDeserializer implements JsonDeserializer<List<Product>> {
 
     @Override
     public List<Product> deserialize(
@@ -32,7 +32,7 @@ public class ProductDeserializer implements JsonDeserializer<List<Product>> {
 
             String productId = productObject.get("id").getAsString();
             String productName = productObject.get("name").getAsString();
-            String productPrice = Html.fromHtml(productObject.get("price_html").getAsString()).toString();
+            String productPrice = productObject.get("regular_price").getAsString();
             String productDescription = Html.fromHtml(
                     productObject.get("description").getAsString()).toString();
 
