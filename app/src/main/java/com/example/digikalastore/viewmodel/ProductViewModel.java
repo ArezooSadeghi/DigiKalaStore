@@ -16,6 +16,7 @@ public class ProductViewModel extends AndroidViewModel {
 
     private LiveData<List<Product>> mProductsLiveData;
     private LiveData<List<Product>> mSearchingProductsLiveData;
+    private LiveData<List<Product>> mProductsByCategoryLiveData;
     private LiveData<List<Category>> mCategoryLiveData;
     private ProductRepository mRepository;
     private List<Product> mProducts;
@@ -26,6 +27,7 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository = ProductRepository.getInstance(getApplication());
         mProductsLiveData = mRepository.getProductsLiveData();
         mSearchingProductsLiveData = mRepository.getSearchingProductsLiveData();
+        mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
         mCategoryLiveData = mRepository.getCategoryLiveData();
         mTitles = mRepository.getTitles();
     }
@@ -36,6 +38,10 @@ public class ProductViewModel extends AndroidViewModel {
 
     public LiveData<List<Product>> getProductsLiveData() {
         return mProductsLiveData;
+    }
+
+    public LiveData<List<Product>> getProductsByCategoryLiveData() {
+        return mProductsByCategoryLiveData;
     }
 
     public LiveData<List<Product>> getSearchingProductsLiveData() {
@@ -76,5 +82,9 @@ public class ProductViewModel extends AndroidViewModel {
 
     public void fetchCategories() {
         mRepository.fetchCategories();
+    }
+
+    public void fetchProductsByCategory(String id) {
+        mRepository.fetchProductsByCategory(id);
     }
 }

@@ -82,7 +82,7 @@
             android:id="@+id/list_view_result_search"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".uicontroller.activity.SearchableActivity">
+            tools:context=".view.activity.SearchableActivity">
 
         </ListView>
     </LinearLayout>

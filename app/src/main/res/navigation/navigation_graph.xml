@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.digikalastore.uicontroller.fragment.HomeFragment"
+        android:name="com.example.digikalastore.view.fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
         <action
@@ -19,7 +19,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.example.digikalastore.uicontroller.fragment.CategoryFragment"
+        android:name="com.example.digikalastore.view.fragment.CategoryFragment"
         android:label="fragment_category"
         tools:layout="@layout/fragment_category">
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.example.digikalastore.uicontroller.fragment.ProductDetailFragment"
+        android:name="com.example.digikalastore.view.fragment.ProductDetailFragment"
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail">
         <argument
@@ -41,7 +41,7 @@
     </fragment>
     <fragment
         android:id="@+id/allCategoryProductsFragment"
-        android:name="com.example.digikalastore.AllCategoryProductsFragment"
+        android:name="com.example.digikalastore.view.fragment.AllCategoryProductsFragment"
         android:label="fragment_all_category_products"
         tools:layout="@layout/fragment_all_category_products">
         <argument

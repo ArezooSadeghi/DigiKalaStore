@@ -10,8 +10,11 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.databinding.AllCategoryProductsItemBinding;
+import com.example.digikalastore.databinding.FragmentAllCategoryProductsBinding;
 import com.example.digikalastore.databinding.ProductCategoryRecyclerViewItemBinding;
 import com.example.digikalastore.databinding.ProductRelatedCategoryRecyclerViewItemBinding;
+import com.example.digikalastore.databinding.ResultSearchProductItemBinding;
 import com.example.digikalastore.model.Product;
 import com.squareup.picasso.Picasso;
 
@@ -59,10 +62,18 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     R.layout.product_category_recycler_view_item,
                     parent,
                     false));
-        } else {
+        }
+
+        if (viewType == 2) {
             return new ViewHolderTwo(DataBindingUtil.inflate(
                     LayoutInflater.from(mContext),
                     R.layout.product_related_category_recycler_view_item,
+                    parent,
+                    false));
+        } else {
+            return new ViewHolderThree(DataBindingUtil.inflate(
+                    LayoutInflater.from(mContext),
+                    R.layout.result_search_product_item,
                     parent,
                     false));
         }
@@ -80,6 +91,9 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
         } else if (holder instanceof ViewHolderTwo) {
             ((ViewHolderTwo) holder).bindProductTwo(mProducts.get(position));
+
+        } else if (holder instanceof ViewHolderThree) {
+            ((ViewHolderThree) holder).bindProduct(mProducts.get(position));
         }
     }
 
@@ -119,6 +133,20 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public void bindProductTwo(Product product) {
             mBinding.txtProductSimpleName.setText(product.getName());
             Picasso.get().load(product.getImageUrl().get(0)).into(mBinding.imgProduct);
+        }
+    }
+
+    public class ViewHolderThree extends RecyclerView.ViewHolder {
+
+        private ResultSearchProductItemBinding mBinding;
+
+        public ViewHolderThree(ResultSearchProductItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        public void bindProduct(Product product) {
+            mBinding.setProduct(product);
         }
     }
 

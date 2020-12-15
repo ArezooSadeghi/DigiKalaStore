@@ -1,6 +1,4 @@
-package com.example.digikalastore.retrofit;
-
-import android.util.Log;
+package com.example.digikalastore.remote.retrofit;
 
 import com.example.digikalastore.model.Category;
 import com.google.gson.JsonArray;

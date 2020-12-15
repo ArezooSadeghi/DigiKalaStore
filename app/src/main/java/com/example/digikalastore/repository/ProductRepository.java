@@ -8,10 +8,10 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.retrofit.CategoryListDeserializer;
-import com.example.digikalastore.retrofit.DigiKalaService;
-import com.example.digikalastore.retrofit.ProductListDeserializer;
-import com.example.digikalastore.retrofit.RetrofitInstance;
+import com.example.digikalastore.remote.retrofit.CategoryListDeserializer;
+import com.example.digikalastore.remote.retrofit.DigiKalaService;
+import com.example.digikalastore.remote.retrofit.ProductListDeserializer;
+import com.example.digikalastore.remote.retrofit.RetrofitInstance;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ public class ProductRepository {
 
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
     private List<String> mTitles;
     private List<Product> mProducts;
@@ -79,6 +80,10 @@ public class ProductRepository {
         return mCategoryLiveData;
     }
 
+    public MutableLiveData<List<Product>> getProductsByCategoryLiveData() {
+        return mProductsByCategoryLiveData;
+    }
+
     public MutableLiveData<List<Product>> getSearchingProductsLiveData() {
         return mSearchingProductsLiveData;
     }
@@ -89,6 +94,21 @@ public class ProductRepository {
 
     public void setTitles(List<String> titles) {
         mTitles = titles;
+    }
+
+    public void fetchProductsByCategory(String id) {
+        Call<List<Product>> call = mDigiKalaServiceProduct.getProductsByCategory(id);
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                mProductsByCategoryLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
     }
 
     public void fetchCategories() {
@@ -107,7 +127,7 @@ public class ProductRepository {
     }
 
     public void fetchSearchingProductsAsync(String query) {
-        Call<List<Product>> call = mDigiKalaServiceProduct.serarchProduct(query);
+        Call<List<Product>> call = mDigiKalaServiceProduct.serarchProducts(query);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -122,7 +142,7 @@ public class ProductRepository {
     }
 
     public void fetchProductAsync() {
-        Call<List<Product>> call = mDigiKalaServiceProduct.getProductList();
+        Call<List<Product>> call = mDigiKalaServiceProduct.getProducts();
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {

@@ -1,4 +1,4 @@
-package com.example.digikalastore.uicontroller.fragment;
+package com.example.digikalastore.view.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

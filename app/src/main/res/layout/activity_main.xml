@@ -10,7 +10,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".uicontroller.activity.MainActivity">
+        tools:context=".view.activity.MainActivity">
 
         <fragment
             android:id="@+id/nav_host_fragment"

@@ -1,4 +1,4 @@
-package com.example.digikalastore.uicontroller.activity;
+package com.example.digikalastore.view.activity;
 
 import android.content.Context;
 import android.content.Intent;

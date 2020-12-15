@@ -1,4 +1,4 @@
-package com.example.digikalastore.retrofit;
+package com.example.digikalastore.remote.retrofit;
 
 import com.example.digikalastore.remote.NetworkParams;
 import com.google.gson.Gson;

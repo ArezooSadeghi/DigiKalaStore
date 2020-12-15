@@ -1,4 +1,4 @@
-package com.example.digikalastore.retrofit;
+package com.example.digikalastore.remote.retrofit;
 
 import android.text.Html;
 
