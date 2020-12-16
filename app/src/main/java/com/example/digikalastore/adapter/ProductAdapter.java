@@ -1,6 +1,7 @@
 package com.example.digikalastore.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +91,12 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 }
             });
         } else if (holder instanceof ViewHolderTwo) {
+            ((ViewHolderTwo) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCallbcak.productCategoryItemClicked(mProducts.get(position).getId());
+                }
+            });
             ((ViewHolderTwo) holder).bindProductTwo(mProducts.get(position));
 
         } else if (holder instanceof ViewHolderThree) {
@@ -151,6 +158,6 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public interface ProductCategoryItemClickedCallbcak {
-        void productCategoryItemClicked(String productId);
+        void productCategoryItemClicked(int productId);
     }
 }

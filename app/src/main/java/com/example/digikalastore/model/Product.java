@@ -13,7 +13,8 @@ import java.util.List;
 public class Product implements Serializable {
 
     private String mName;
-    private String mId;
+    private int mId;
+    private int mRatingCount;
     private List<String> mImageUrl;
     private String mDescription;
     private String mPrice;
@@ -25,7 +26,7 @@ public class Product implements Serializable {
     public Product() {
     }
 
-    public Product(String name, String id, List<String> imageUrl, String description, String price, String AverageRate) {
+    public Product(String name, int id, List<String> imageUrl, String description, String price, String AverageRate) {
         mName = name;
         mId = id;
         mImageUrl = imageUrl;
@@ -66,11 +67,11 @@ public class Product implements Serializable {
         mName = name;
     }
 
-    public String getId() {
+    public int getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         mId = id;
     }
 
@@ -104,6 +105,14 @@ public class Product implements Serializable {
 
     public void setCategory(List<Category> category) {
         mCategory = category;
+    }
+
+    public int getRatingCount() {
+        return mRatingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        mRatingCount = ratingCount;
     }
 
     @BindingAdapter("productImage")

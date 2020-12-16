@@ -3,7 +3,6 @@ package com.example.digikalastore.view.activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AbsListView;
@@ -68,7 +67,23 @@ public class SearchableActivity extends AppCompatActivity {
                 ExpandableListViewAdapter adapter = new ExpandableListViewAdapter(SearchableActivity.this, mParentList, mChildList, new ExpandableListViewAdapter.SetItemClickListener() {
                     @Override
                     public void itemClicked(String text) {
-                        /*mViewModel.fetchNewestProductsAsync(text, "2");*/
+                        if (text.equals(getResources().getString(R.string.desc_order_by_price))) {
+
+                            mViewModel.fetchProductsByOrder(mQuery, "price", "desc");
+
+                        } else if (text.equals(getResources().getString(R.string.asc_order_by_price))) {
+
+                            mViewModel.fetchProductsByOrder(mQuery, "price", "asc");
+
+                        } else if (text.equals(getResources().getString(R.string.order_by_sale))) {
+
+                            mViewModel.fetchProductsByOrder(mQuery, "popularity", "desc");
+
+                        } else if (text.equals(getResources().getString(R.string.order_by_date))) {
+
+                            mViewModel.fetchProductsByOrder(mQuery, "date", "desc");
+
+                        }
                     }
                 });
                 mBinding.expandable.setAdapter(adapter);
@@ -96,6 +111,8 @@ public class SearchableActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
     private void setObserver() {
@@ -103,17 +120,15 @@ public class SearchableActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Product> products) {
                 setupAdapter(products);
-                Log.d("Arezoo", "comeOne");
             }
         });
 
-       /* mViewModel.getNewestProductsLiveData().observe(this, new Observer<List<Product>>() {
-            @Override
-            public void onChanged(List<Product> products) {
-                setupAdapter(products);
-                Log.d("Arezoo", "comeTwo");
-            }
-        });*/
+       mViewModel.getProductsByOrder().observe(this, new Observer<List<Product>>() {
+           @Override
+           public void onChanged(List<Product> products) {
+               setupAdapter(products);
+           }
+       });
     }
 
     private void handleIntent() {

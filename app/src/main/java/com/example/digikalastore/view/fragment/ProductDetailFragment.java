@@ -56,7 +56,7 @@ public class ProductDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ProductDetailFragmentArgs args = ProductDetailFragmentArgs.fromBundle(getArguments());
-        String productId = args.getProductId();
+        int productId = args.getProductId();
         mProduct = mViewModel.getProduct(productId);
         initViews();
     }

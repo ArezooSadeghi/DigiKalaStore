@@ -8,10 +8,12 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 import com.example.digikalastore.remote.retrofit.CategoryListDeserializer;
 import com.example.digikalastore.remote.retrofit.DigiKalaService;
 import com.example.digikalastore.remote.retrofit.ProductListDeserializer;
 import com.example.digikalastore.remote.retrofit.RetrofitInstance;
+import com.example.digikalastore.remote.retrofit.ReviewListDeserializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -27,15 +29,18 @@ public class ProductRepository {
 
     public static final String TAG = "ProductRepository";
 
+    private MutableLiveData<List<Product>> mProductsByOrder = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<Review>> mReviews = new MutableLiveData<>();
     private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
     private List<String> mTitles;
     private List<Product> mProducts;
     private static ProductRepository sInstance;
     private DigiKalaService mDigiKalaServiceProduct;
     private DigiKalaService mDigiKalaServiceCategory;
+    private DigiKalaService mDigiKalaServiceReview;
     private Context mContext;
 
     private ProductRepository(Context context) {
@@ -49,11 +54,16 @@ public class ProductRepository {
                 }.getType(),
                 new CategoryListDeserializer()).create(DigiKalaService.class);
 
+        mDigiKalaServiceReview = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Review>>() {
+                }.getType(),
+                new ReviewListDeserializer()).create(DigiKalaService.class);
+
         mContext = context.getApplicationContext();
         mTitles = new ArrayList<String>() {{
-            add(mContext.getResources().getString(R.string.best_product_title));
-            add(mContext.getResources().getString(R.string.latest_product_title));
-            add(mContext.getResources().getString(R.string.most_visited_product_title));
+            add(mContext.getResources().getString(R.string.best_products_title));
+            add(mContext.getResources().getString(R.string.latest_products_title));
+            add(mContext.getResources().getString(R.string.most_visited_products_title));
         }};
     }
 
@@ -80,6 +90,14 @@ public class ProductRepository {
         return mCategoryLiveData;
     }
 
+    public MutableLiveData<List<Product>> getProductsByOrder() {
+        return mProductsByOrder;
+    }
+
+    public MutableLiveData<List<Review>> getReviews() {
+        return mReviews;
+    }
+
     public MutableLiveData<List<Product>> getProductsByCategoryLiveData() {
         return mProductsByCategoryLiveData;
     }
@@ -94,6 +112,21 @@ public class ProductRepository {
 
     public void setTitles(List<String> titles) {
         mTitles = titles;
+    }
+
+    public void fetchReviews(int[] productId) {
+        Call<List<Review>> call = mDigiKalaServiceReview.getReviews(productId);
+        call.enqueue(new Callback<List<Review>>() {
+            @Override
+            public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+                mReviews.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Review>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
     }
 
     public void fetchProductsByCategory(String id) {
@@ -157,9 +190,9 @@ public class ProductRepository {
         });
     }
 
-    public Product getProduct(String productId) {
+    public Product getProduct(int productId) {
         for (Product product : mProducts) {
-            if (product.getId().equals(productId)) {
+            if (product.getId()==productId) {
                 return product;
             }
         }
@@ -188,5 +221,20 @@ public class ProductRepository {
 
         List<Category> categories = new ArrayList<>(hashMap.values());
         return categories;
+    }
+
+    public void fetchProductsByPrice(String search, String orderby, String order) {
+        Call<List<Product>> call = mDigiKalaServiceProduct.getProductsByOrder(search, orderby, order);
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                mProductsByOrder.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
     }
 }

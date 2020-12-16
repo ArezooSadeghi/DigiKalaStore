@@ -1,6 +1,7 @@
 package com.example.digikalastore.view.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,9 +19,10 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.adapter.CategoryAdapter;
+import com.example.digikalastore.adapter.TitleAdapter;
 import com.example.digikalastore.databinding.FragmentHomeBinding;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding mBinding;
     private ProductViewModel mViewModel;
+    private List<Product> mProducts;
 
     public HomeFragment() {
     }
@@ -78,6 +81,7 @@ public class HomeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.item_search:
                 getActivity().onSearchRequested();
+                Log.d("Arezoo", "clicked");
                 return true;
             default:
                 return false;
@@ -98,14 +102,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupAdapter(List<Product> products) {
-        CategoryAdapter adapter = new CategoryAdapter(
+        TitleAdapter adapter = new TitleAdapter(
                 getContext(),
-                mViewModel.getCategories(),
-                mViewModel.getProducts(),
-                1,
-                new CategoryAdapter.CategoryItemClickedCallback() {
+                mViewModel.getTitles(),
+                products,
+                new TitleAdapter.SetItemClickedListener() {
                     @Override
-                    public void categoryItemClicked(String productId) {
+                    public void itemClicked(int productId) {
                         HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
                                 HomeFragmentDirections.actionHomeFragmentToProductDetailFragment();
                         action.setProductId(productId);

@@ -27,6 +27,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context mContext;
     private List<Category> mCategories;
     private List<Product> mProducts;
+    private List<String> mTitles;
     private CategoryItemClickedCallback mCallback;
     private SetItemClickListener mListener;
 
@@ -121,16 +122,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public void setProductRecyclerViewTypeOne(RecyclerView recyclerView, List<Product> products) {
-        recyclerView.setLayoutManager(new GridLayoutManager(
+        recyclerView.setLayoutManager(new LinearLayoutManager(
                 mContext,
-                SPAN_COUNT,
-                GridLayoutManager.HORIZONTAL,
+                LinearLayoutManager.HORIZONTAL,
                 false));
 
         ProductAdapter adapter = new ProductAdapter(
                 mContext, products, 1, new ProductAdapter.ProductCategoryItemClickedCallbcak() {
             @Override
-            public void productCategoryItemClicked(String productId) {
+            public void productCategoryItemClicked(int productId) {
                 mCallback.categoryItemClicked(productId);
             }
         });
@@ -148,7 +148,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public interface CategoryItemClickedCallback {
-        void categoryItemClicked(String productId);
+        void categoryItemClicked(int productId);
     }
 
     public interface SetItemClickListener {
