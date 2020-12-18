@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.digikalastore.R;
@@ -21,7 +22,6 @@ public class ProductDetailFragment extends Fragment {
 
     private FragmentProductDetailBinding mBinding;
     private ProductViewModel mViewModel;
-    private Product mProduct;
 
     public ProductDetailFragment() {
     }
@@ -36,6 +36,7 @@ public class ProductDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
     }
 
@@ -57,13 +58,22 @@ public class ProductDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ProductDetailFragmentArgs args = ProductDetailFragmentArgs.fromBundle(getArguments());
         int productId = args.getProductId();
-        mProduct = mViewModel.getProduct(productId);
-        initViews();
+        mViewModel.retrieveProduct(productId);
+        setObserver();
     }
 
-    private void initViews() {
-        mBinding.setProduct(mProduct);
-        ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), mProduct.getImageUrl());
+    private void setObserver() {
+        mViewModel.getRetrieveProductLiveData().observe(getViewLifecycleOwner(), new Observer<Product>() {
+            @Override
+            public void onChanged(Product product) {
+                initViews(product);
+            }
+        });
+    }
+
+    private void initViews(Product product) {
+        mBinding.setProduct(product);
+        ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), product.getImageUrl());
         mBinding.imgProductSlider.setSliderAdapter(adapter);
     }
 }

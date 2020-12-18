@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
@@ -26,7 +27,7 @@ public class AllCategoryProductsFragment extends Fragment {
 
     private FragmentAllCategoryProductsBinding mBinding;
     private ProductViewModel mViewModel;
-    private String mCategoryId;
+    private int mCategoryId;
 
     public AllCategoryProductsFragment() {
     }
@@ -65,7 +66,7 @@ public class AllCategoryProductsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         AllCategoryProductsFragmentArgs args = AllCategoryProductsFragmentArgs
                 .fromBundle(getArguments());
-        mCategoryId = args.getProductId();
+        mCategoryId = args.getCategoryId();
     }
 
     @Override
@@ -90,7 +91,15 @@ public class AllCategoryProductsFragment extends Fragment {
     }
 
     private void setupAdapter(List<Product> products) {
-        ProductAdapter adapter = new ProductAdapter(getContext(), products, 3);
+        ProductAdapter adapter = new ProductAdapter(getContext(), products, 3, new ProductAdapter.ProductCategoryItemClickedCallbcak() {
+            @Override
+            public void productCategoryItemClicked(int productId) {
+                AllCategoryProductsFragmentDirections.ActionAllCategoryProductsFragmentToProductDetailFragment action =
+                        AllCategoryProductsFragmentDirections.actionAllCategoryProductsFragmentToProductDetailFragment();
+                action.setProductId(productId);
+                NavHostFragment.findNavController(AllCategoryProductsFragment.this).navigate(action);
+            }
+        });
         mBinding.recyclerViewAllCategoryProducts.setAdapter(adapter);
     }
 }

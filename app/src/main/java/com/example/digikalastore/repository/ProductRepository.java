@@ -5,15 +5,14 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.model.Review;
-import com.example.digikalastore.remote.retrofit.CategoryListDeserializer;
-import com.example.digikalastore.remote.retrofit.DigiKalaService;
+import com.example.digikalastore.remote.retrofit.CategoryDeserializer;
+import com.example.digikalastore.remote.retrofit.CategoryService;
+import com.example.digikalastore.remote.retrofit.ProductDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductListDeserializer;
+import com.example.digikalastore.remote.retrofit.ProductService;
 import com.example.digikalastore.remote.retrofit.RetrofitInstance;
-import com.example.digikalastore.remote.retrofit.ReviewListDeserializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -21,50 +20,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductRepository {
 
-    public static final String TAG = "ProductRepository";
+    public static final String TAG = ProductRepository.class.getSimpleName();
 
     private MutableLiveData<List<Product>> mProductsByOrder = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
-    private MutableLiveData<List<Review>> mReviews = new MutableLiveData<>();
     private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
-    private List<String> mTitles;
+    private MutableLiveData<Product> mRetrieveProductLiveData = new MutableLiveData<>();
     private List<Product> mProducts;
     private static ProductRepository sInstance;
-    private DigiKalaService mDigiKalaServiceProduct;
-    private DigiKalaService mDigiKalaServiceCategory;
-    private DigiKalaService mDigiKalaServiceReview;
+    private ProductService mProductListService, mProductService;
+    private CategoryService mCategoryService;
+    private ProductService mDigiKalaServiceReview;
     private Context mContext;
 
+
+    private HashMap<String, List<Product>> mItems = new HashMap<>();
+    private MutableLiveData<HashMap<String, List<Product>>> mResponseLiveData = new MutableLiveData<>();
+
+
     private ProductRepository(Context context) {
-        mDigiKalaServiceProduct = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Product>>() {
-                }.getType(),
-                new ProductListDeserializer()).create(DigiKalaService.class);
+        mProductListService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Product>>() {}.getType(),
+                new ProductListDeserializer()).create(ProductService.class);
 
-        mDigiKalaServiceCategory = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Category>>() {
-                }.getType(),
-                new CategoryListDeserializer()).create(DigiKalaService.class);
+        mProductService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<Product>() {}.getType(),
+                new ProductDeserializer()).create(ProductService.class);
 
-        mDigiKalaServiceReview = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Review>>() {
-                }.getType(),
-                new ReviewListDeserializer()).create(DigiKalaService.class);
+        mCategoryService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Category>>() {}.getType(),
+                new CategoryDeserializer()).create(CategoryService.class);
 
         mContext = context.getApplicationContext();
-        mTitles = new ArrayList<String>() {{
-            add(mContext.getResources().getString(R.string.best_products_title));
-            add(mContext.getResources().getString(R.string.latest_products_title));
-            add(mContext.getResources().getString(R.string.most_visited_products_title));
-        }};
     }
 
     public static ProductRepository getInstance(Context context) {
@@ -82,6 +78,10 @@ public class ProductRepository {
         mProducts = products;
     }
 
+    public MutableLiveData<Product> getRetrieveProductLiveData() {
+        return mRetrieveProductLiveData;
+    }
+
     public MutableLiveData<List<Product>> getProductsLiveData() {
         return mProductsLiveData;
     }
@@ -94,9 +94,6 @@ public class ProductRepository {
         return mProductsByOrder;
     }
 
-    public MutableLiveData<List<Review>> getReviews() {
-        return mReviews;
-    }
 
     public MutableLiveData<List<Product>> getProductsByCategoryLiveData() {
         return mProductsByCategoryLiveData;
@@ -106,31 +103,13 @@ public class ProductRepository {
         return mSearchingProductsLiveData;
     }
 
-    public List<String> getTitles() {
-        return mTitles;
+
+    public MutableLiveData<HashMap<String, List<Product>>> getResponseLiveData() {
+        return mResponseLiveData;
     }
 
-    public void setTitles(List<String> titles) {
-        mTitles = titles;
-    }
-
-    public void fetchReviews(int[] productId) {
-        Call<List<Review>> call = mDigiKalaServiceReview.getReviews(productId);
-        call.enqueue(new Callback<List<Review>>() {
-            @Override
-            public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
-                mReviews.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<Review>> call, Throwable t) {
-                Log.e(TAG, t.getMessage(), t);
-            }
-        });
-    }
-
-    public void fetchProductsByCategory(String id) {
-        Call<List<Product>> call = mDigiKalaServiceProduct.getProductsByCategory(id);
+    public void fetchProductsByCategory(int categoryId) {
+        Call<List<Product>> call = mProductListService.getProductsByCategory(categoryId);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -145,7 +124,7 @@ public class ProductRepository {
     }
 
     public void fetchCategories() {
-        Call<List<Category>> call = mDigiKalaServiceCategory.getCategories();
+        Call<List<Category>> call = mCategoryService.getCategories();
         call.enqueue(new Callback<List<Category>>() {
             @Override
             public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
@@ -160,7 +139,7 @@ public class ProductRepository {
     }
 
     public void fetchSearchingProductsAsync(String query) {
-        Call<List<Product>> call = mDigiKalaServiceProduct.serarchProducts(query);
+        Call<List<Product>> call = mProductListService.serarchProducts(query);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -175,7 +154,7 @@ public class ProductRepository {
     }
 
     public void fetchProductAsync() {
-        Call<List<Product>> call = mDigiKalaServiceProduct.getProducts();
+        Call<List<Product>> call = mProductListService.getProducts();
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -192,18 +171,18 @@ public class ProductRepository {
 
     public Product getProduct(int productId) {
         for (Product product : mProducts) {
-            if (product.getId()==productId) {
+            if (product.getId() == productId) {
                 return product;
             }
         }
         return null;
     }
 
-    public List<Product> getProductsByCategory(String categoryId) {
+    public List<Product> getProductsByCategory(int categoryId) {
         List<Product> products = new ArrayList<>();
         for (Product product : mProducts) {
             for (Category category : product.getCategory()) {
-                if (category.getId().equals(categoryId)) {
+                if (category.getId() == categoryId) {
                     products.add(product);
                 }
             }
@@ -212,7 +191,7 @@ public class ProductRepository {
     }
 
     public List<Category> getCategories() {
-        Map<String, Category> hashMap = new HashMap<>();
+        Map<Integer, Category> hashMap = new HashMap<>();
         for (Product product : mProducts) {
             for (Category category : product.getCategory()) {
                 hashMap.put(category.getId(), category);
@@ -224,7 +203,7 @@ public class ProductRepository {
     }
 
     public void fetchProductsByPrice(String search, String orderby, String order) {
-        Call<List<Product>> call = mDigiKalaServiceProduct.getProductsByOrder(search, orderby, order);
+        Call<List<Product>> call = mProductListService.getProductsByOrder(search, orderby, order);
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -236,5 +215,34 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
+    }
+
+
+    public void retrieveProduct(int productId) {
+        Call<Product> call = mProductService.retrieveProduct(productId);
+        call.enqueue(new Callback<Product>() {
+            @Override
+            public void onResponse(Call<Product> call, Response<Product> response) {
+                mRetrieveProductLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Product> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+
+    }
+
+    public Observable<List<Product>> getLatestProductsObservable() {
+        return mProductListService.getLatestProducts();
+    }
+
+    public Observable<List<Product>> getBestProductsObservable() {
+        return mProductListService.getBestProducts();
+    }
+
+    public Observable<List<Product>> getMostVisitedProductsObservable() {
+        return mProductListService.getMostVisitedProducts();
     }
 }

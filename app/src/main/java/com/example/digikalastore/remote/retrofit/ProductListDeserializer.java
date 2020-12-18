@@ -64,7 +64,7 @@ public class ProductListDeserializer implements JsonDeserializer<List<Product>> 
             for (int j = 0; j < categories.size(); j++) {
                 List<Product> categoryProduct = new ArrayList<>();
                 JsonObject categoryObject = categories.get(j).getAsJsonObject();
-                String categoryId = categoryObject.get("id").getAsString();
+                int categoryId = categoryObject.get("id").getAsInt();
                 String categoryName = categoryObject.get("name").getAsString();
                 Category category = new Category(categoryName, categoryId);
                 productCategories.add(category);

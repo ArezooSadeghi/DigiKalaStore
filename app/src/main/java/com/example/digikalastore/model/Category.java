@@ -3,9 +3,9 @@ package com.example.digikalastore.model;
 public class Category {
 
     private String mName;
-    private String mId;
+    private int mId;
 
-    public Category(String name, String id) {
+    public Category(String name, int id) {
         mName = name;
         mId = id;
     }
@@ -18,11 +18,11 @@ public class Category {
         mName = name;
     }
 
-    public String getId() {
+    public int getId() {
         return mId;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         mId = id;
     }
 }

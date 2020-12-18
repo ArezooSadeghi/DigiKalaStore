@@ -45,8 +45,14 @@
         android:label="fragment_all_category_products"
         tools:layout="@layout/fragment_all_category_products">
         <argument
-            android:name="productId"
-            app:argType="string"
-            android:defaultValue="No productId exist"/>
+            android:name="categoryId"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <action
+            android:id="@+id/action_allCategoryProductsFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_allCategoryProductsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

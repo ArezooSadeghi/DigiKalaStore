@@ -101,6 +101,12 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (holder instanceof ViewHolderThree) {
             ((ViewHolderThree) holder).bindProduct(mProducts.get(position));
+            ((ViewHolderThree) holder).mBinding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCallbcak.productCategoryItemClicked(mProducts.get(position).getId());
+                }
+            });
         }
     }
 

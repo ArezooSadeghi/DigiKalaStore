@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 
 import retrofit2.Converter;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitInstance {
@@ -15,6 +16,7 @@ public class RetrofitInstance {
     public static Retrofit getRetrofitInstance(Type type, Object typeAdapter) {
         return new Retrofit.Builder()
                 .baseUrl(NetworkParams.BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(createGsonConverter(type, typeAdapter))
                 .build();
     }

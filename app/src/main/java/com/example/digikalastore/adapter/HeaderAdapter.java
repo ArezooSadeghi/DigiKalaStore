@@ -10,62 +10,61 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.databinding.TitleAdapterItemBinding;
+import com.example.digikalastore.databinding.HeaderAdapterItemBinding;
 import com.example.digikalastore.model.Product;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class TitleAdapter extends RecyclerView.Adapter<TitleAdapter.TitleHolder> {
+public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderHolder> {
 
     private Context mContext;
-    private List<String> mTitles;
-    private List<Product> mProducts;
+    private HashMap<String, List<Product>> mItems;
     private SetItemClickedListener mListener;
+    private List<String> mHeaders;
 
-    public TitleAdapter(
-            Context context,
-            List<String> titles,
-            List<Product> products,
-            SetItemClickedListener listener) {
-
+    public HeaderAdapter(Context context, HashMap<String, List<Product>> items, SetItemClickedListener listener) {
         mContext = context;
-        mTitles = titles;
-        mProducts = products;
+        mItems = items;
         mListener = listener;
+    }
+
+    public void setHeaders(List<String> headers) {
+        mHeaders = headers;
     }
 
     @NonNull
     @Override
-    public TitleHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new TitleHolder(DataBindingUtil.inflate(
+    public HeaderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new HeaderHolder(DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
-                R.layout.title_adapter_item,
+                R.layout.header_adapter_item,
                 parent,
                 false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TitleHolder holder, int position) {
-        holder.bindTitle(mTitles.get(position));
-        setProductRecyclerView(holder.mBinding.recyclerViewTitle, mProducts);
+    public void onBindViewHolder(@NonNull HeaderHolder holder, int position) {
+        holder.bindHeader(mHeaders.get(position));
+        setProductRecyclerView(holder.mBinding.recyclerViewHeader, mItems.get(mHeaders.get(position)));
     }
 
     @Override
     public int getItemCount() {
-        return mTitles.size();
+        return mItems.size();
     }
 
-    public class TitleHolder extends RecyclerView.ViewHolder {
+    public class HeaderHolder extends RecyclerView.ViewHolder {
 
-        private TitleAdapterItemBinding mBinding;
+        private HeaderAdapterItemBinding mBinding;
 
-        public TitleHolder(TitleAdapterItemBinding binding) {
+        public HeaderHolder(HeaderAdapterItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }
 
-        public void bindTitle(String title) {
-            mBinding.txtTitle.setText(title);
+        public void bindHeader(String header) {
+            mBinding.setHeader(header);
         }
     }
 

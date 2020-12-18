@@ -1,7 +1,6 @@
 package com.example.digikalastore.view.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,25 +12,30 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.adapter.TitleAdapter;
+import com.example.digikalastore.adapter.HeaderAdapter;
 import com.example.digikalastore.databinding.FragmentHomeBinding;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.model.Review;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Function3;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding mBinding;
     private ProductViewModel mViewModel;
-    private List<Product> mProducts;
+    private HashMap<String, List<Product>> mItems;
 
     public HomeFragment() {
     }
@@ -46,11 +50,36 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
 
-        mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
-        mViewModel.fetchProductAsync();
-        setObserver();
+        setHasOptionsMenu(true);
+        mItems = new HashMap<>();
+
+        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+
+        Observable.zip(
+                mViewModel.getLatestProductsObservable(),
+                mViewModel.getBestProductsObservable(),
+                mViewModel.getMostVisitedProductsObservable(),
+                new Function3<List<Product>,
+                        List<Product>,
+                        List<Product>,
+                        HashMap<String, List<Product>>>() {
+                    @io.reactivex.annotations.NonNull
+                    @Override
+                    public HashMap<String, List<Product>> apply(
+                            @io.reactivex.annotations.NonNull List<Product> products,
+                            @io.reactivex.annotations.NonNull List<Product> products2,
+                            @io.reactivex.annotations.NonNull List<Product> products3) throws Exception {
+
+                        mItems.put(getString(R.string.latest_products_header), products);
+                        mItems.put(getString(R.string.best_products_header), products2);
+                        mItems.put(getString(R.string.most_visited_products_header), products3);
+
+                        return mItems;
+                    }
+                }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::setupAdapter);
     }
 
     @Override
@@ -63,10 +92,9 @@ public class HomeFragment extends Fragment {
                 container,
                 false);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarHome);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
+        initToolbar();
 
-        initViews();
+        initRecyclerView();
 
         return mBinding.getRoot();
     }
@@ -81,32 +109,26 @@ public class HomeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.item_search:
                 getActivity().onSearchRequested();
-                Log.d("Arezoo", "clicked");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void setObserver() {
-        mViewModel.getProductsLiveData().observe(this, new Observer<List<Product>>() {
-            @Override
-            public void onChanged(List<Product> products) {
-                setupAdapter(products);
-            }
-        });
+    private void initToolbar() {
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarHome);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
     }
 
-    private void initViews() {
+    private void initRecyclerView() {
         mBinding.recyclerViewTitle.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    private void setupAdapter(List<Product> products) {
-        TitleAdapter adapter = new TitleAdapter(
+    private void setupAdapter(HashMap<String, List<Product>> items) {
+        HeaderAdapter adapter = new HeaderAdapter(
                 getContext(),
-                mViewModel.getTitles(),
-                products,
-                new TitleAdapter.SetItemClickedListener() {
+                items,
+                new HeaderAdapter.SetItemClickedListener() {
                     @Override
                     public void itemClicked(int productId) {
                         HomeFragmentDirections.ActionHomeFragmentToProductDetailFragment action =
@@ -115,6 +137,8 @@ public class HomeFragment extends Fragment {
                         NavHostFragment.findNavController(HomeFragment.this).navigate(action);
                     }
                 });
+
+        adapter.setHeaders(new ArrayList<>(items.keySet()));
         mBinding.recyclerViewTitle.setAdapter(adapter);
     }
 }

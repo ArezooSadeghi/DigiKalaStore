@@ -43,6 +43,7 @@ public class CategoryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
@@ -61,8 +62,8 @@ public class CategoryFragment extends Fragment {
                 container,
                 false);
 
-        setToolBar();
-        initViews();
+        initToolBar();
+        initRecyclerView();
 
         return mBinding.getRoot();
     }
@@ -92,28 +93,23 @@ public class CategoryFragment extends Fragment {
         });
     }
 
-    private void setToolBar() {
+    private void initToolBar() {
         ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarCategory);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
     }
 
-    public void initViews() {
+    public void initRecyclerView() {
         mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     public void setupAdapter(List<Category> categories) {
 
-        CategoryAdapter adapter = new CategoryAdapter(
-                2,
-                getContext(),
-                categories,
-                mViewModel.getProducts(),
-                new CategoryAdapter.SetItemClickListener() {
+        CategoryAdapter adapter = new CategoryAdapter(getContext(), categories, new CategoryAdapter.SetItemClickListener() {
             @Override
-            public void ItemClicked(String categoryId) {
+            public void ItemClicked(int categoryId) {
                 CategoryFragmentDirections.ActionCategoryFragmentToAllCategoryProductsFragment action =
                         CategoryFragmentDirections.actionCategoryFragmentToAllCategoryProductsFragment();
-                action.setProductId(categoryId);
+                action.setCategoryId(categoryId);
                 NavHostFragment.findNavController(CategoryFragment.this).navigate(action);
             }
         });

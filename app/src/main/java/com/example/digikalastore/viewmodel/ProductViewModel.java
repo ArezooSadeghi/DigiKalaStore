@@ -8,11 +8,12 @@ import androidx.lifecycle.LiveData;
 
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.model.Review;
 import com.example.digikalastore.repository.ProductRepository;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import io.reactivex.Observable;
 
 public class ProductViewModel extends AndroidViewModel {
 
@@ -20,11 +21,13 @@ public class ProductViewModel extends AndroidViewModel {
     private LiveData<List<Product>> mProductsByOrder;
     private LiveData<List<Product>> mSearchingProductsLiveData;
     private LiveData<List<Product>> mProductsByCategoryLiveData;
-    private LiveData<List<Review>> mReviews;
     private LiveData<List<Category>> mCategoryLiveData;
+    private LiveData<Product> mRetrieveProductLiveData;
     private ProductRepository mRepository;
     private List<Product> mProducts;
-    private List<String> mTitles;
+
+
+    private LiveData<HashMap<String, List<Product>>> mResponseLiveData;
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
@@ -33,9 +36,15 @@ public class ProductViewModel extends AndroidViewModel {
         mProductsByOrder = mRepository.getProductsByOrder();
         mSearchingProductsLiveData = mRepository.getSearchingProductsLiveData();
         mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
-        mReviews = mRepository.getReviews();
         mCategoryLiveData = mRepository.getCategoryLiveData();
-        mTitles = mRepository.getTitles();
+        mRetrieveProductLiveData = mRepository.getRetrieveProductLiveData();
+
+
+        mResponseLiveData = mRepository.getResponseLiveData();
+    }
+
+    public LiveData<Product> getRetrieveProductLiveData() {
+        return mRetrieveProductLiveData;
     }
 
     public LiveData<List<Product>> getProductsByOrder() {
@@ -44,10 +53,6 @@ public class ProductViewModel extends AndroidViewModel {
 
     public List<Product> getProducts() {
         return mRepository.getProducts();
-    }
-
-    public LiveData<List<Review>> getReviews() {
-        return mReviews;
     }
 
     public LiveData<List<Product>> getProductsLiveData() {
@@ -62,16 +67,14 @@ public class ProductViewModel extends AndroidViewModel {
         return mSearchingProductsLiveData;
     }
 
+
+    public LiveData<HashMap<String, List<Product>>> getResponseLiveData() {
+        return mResponseLiveData;
+    }
+
+
     public LiveData<List<Category>> getCategoryLiveData() {
         return mCategoryLiveData;
-    }
-
-    public List<String> getTitles() {
-        return mTitles;
-    }
-
-    public void setTitles(List<String> titles) {
-        mTitles = titles;
     }
 
     public void fetchProductAsync() {
@@ -86,7 +89,7 @@ public class ProductViewModel extends AndroidViewModel {
         return mRepository.getCategories();
     }
 
-    public List<Product> getProductsByCategory(String categoryId) {
+    public List<Product> getProductsByCategory(int categoryId) {
         return mRepository.getProductsByCategory(categoryId);
     }
 
@@ -98,35 +101,28 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository.fetchCategories();
     }
 
-    public void fetchProductsByCategory(String id) {
-        mRepository.fetchProductsByCategory(id);
+    public void fetchProductsByCategory(int categoryId) {
+        mRepository.fetchProductsByCategory(categoryId);
     }
 
-    public void fetchReviews(int[] productId) {
-        mRepository.fetchReviews(productId);
-    }
-
-    public List<Product> getBestProducts(List<Product> products) {
-        List<Product> bestProducts = new ArrayList<>();
-        for (Product product:products) {
-            if (Float.valueOf(product.getAverageRate()) > 0.0) {
-                bestProducts.add(product);
-            }
-        }
-        return bestProducts;
-    }
-
-    public int[] getProductsId(List<Product> products) {
-        int[] productId = new int[products.size()];
-        for (int i = 0; i < productId.length; i++) {
-            productId[i] = products.get(i).getId();
-        }
-        return productId;
-    }
 
     public void fetchProductsByOrder(String search, String orderby, String order) {
         mRepository.fetchProductsByPrice(search, orderby, order);
     }
 
+    public void retrieveProduct(int productId) {
+        mRepository.retrieveProduct(productId);
+    }
 
+    public Observable<List<Product>> getLatestProductsObservable() {
+        return mRepository.getLatestProductsObservable();
+    }
+
+    public Observable<List<Product>> getBestProductsObservable() {
+        return mRepository.getBestProductsObservable();
+    }
+
+    public Observable<List<Product>> getMostVisitedProductsObservable() {
+        return mRepository.getMostVisitedProductsObservable();
+    }
 }

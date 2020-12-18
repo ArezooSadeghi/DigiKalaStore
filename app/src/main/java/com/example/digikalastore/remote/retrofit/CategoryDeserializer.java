@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategoryListDeserializer implements JsonDeserializer<List<Category>> {
+public class CategoryDeserializer implements JsonDeserializer<List<Category>> {
 
     @Override
     public List<Category> deserialize(
@@ -25,7 +25,7 @@ public class CategoryListDeserializer implements JsonDeserializer<List<Category>
 
         for (int i = 0; i < bodyArray.size(); i++) {
             JsonObject categoryObject = bodyArray.get(i).getAsJsonObject();
-            String categoryId = categoryObject.get("id").getAsString();
+            int categoryId = categoryObject.get("id").getAsInt();
             String categoryName = categoryObject.get("name").getAsString();
             Category category = new Category(categoryName, categoryId);
             categories.add(category);
