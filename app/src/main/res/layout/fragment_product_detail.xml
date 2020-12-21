@@ -8,6 +8,7 @@
         <variable
             name="product"
             type="com.example.digikalastore.model.Product" />
+
     </data>
 
     <ScrollView
@@ -40,10 +41,10 @@
                 app:sliderStartAutoCycle="true">
 
                 <ImageView
-                    android:layout_marginTop="25dp"
                     android:id="@+id/img_product"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp" />
+                    android:layout_height="150dp"
+                    android:layout_marginTop="25dp" />
 
             </com.smarteist.autoimageslider.SliderView>
 
@@ -61,10 +62,47 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="16dp"
                 android:lineSpacingMultiplier="2"
-                android:text="@{product.description}"
-                android:lines="10" />
+                android:lines="10"
+                android:text="@{product.description}" />
+
+            <Button
+                android:id="@+id/btn_add_to_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@android:color/holo_red_light"
+                android:text="@string/text_button" />
+
+            <RelativeLayout
+                android:id="@+id/show_detail_of_sale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_number"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/custom_button"
+                    android:text="@string/number"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_toLeftOf="@id/btn_number"
+                    android:text="@string/text_sale"
+                    android:textSize="14sp" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
     </ScrollView>
+
 </layout>

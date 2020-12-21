@@ -15,13 +15,17 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.ImageSliderAdapter;
 import com.example.digikalastore.databinding.FragmentProductDetailBinding;
+import com.example.digikalastore.event.Event;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.viewmodel.ProductViewModel;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class ProductDetailFragment extends Fragment {
 
     private FragmentProductDetailBinding mBinding;
     private ProductViewModel mViewModel;
+    private Product mProduct;
 
     public ProductDetailFragment() {
     }
@@ -50,6 +54,8 @@ public class ProductDetailFragment extends Fragment {
                 container,
                 false);
 
+        setListener();
+
         return mBinding.getRoot();
     }
 
@@ -62,10 +68,23 @@ public class ProductDetailFragment extends Fragment {
         setObserver();
     }
 
+    private void setListener() {
+        mBinding.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new Event());
+                mBinding.btnAddToCart.setVisibility(View.GONE);
+                mBinding.showDetailOfSale.setVisibility(View.VISIBLE);
+                mViewModel.getProductList().add(mProduct);
+            }
+        });
+    }
+
     private void setObserver() {
         mViewModel.getRetrieveProductLiveData().observe(getViewLifecycleOwner(), new Observer<Product>() {
             @Override
             public void onChanged(Product product) {
+                mProduct = product;
                 initViews(product);
             }
         });

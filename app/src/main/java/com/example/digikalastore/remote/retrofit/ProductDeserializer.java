@@ -33,7 +33,15 @@ public class ProductDeserializer implements JsonDeserializer<Product> {
                 productObject.get("description").getAsString()).toString();
         String productPrice = productObject.get("price").getAsString();
         String productAverageRating = productObject.get("average_rating").getAsString();
+        boolean isFeatured = productObject.get("featured").getAsBoolean();
 
-        return new Product(productName, productId, productImageUrls, productDescription, productPrice, productAverageRating);
+        return new Product(
+                productName,
+                productId,
+                productImageUrls,
+                productDescription,
+                productPrice,
+                productAverageRating,
+                isFeatured);
     }
 }

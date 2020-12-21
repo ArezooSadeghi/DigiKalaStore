@@ -10,18 +10,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.databinding.HeaderAdapterItemBinding;
+import com.example.digikalastore.databinding.HeaderAdapterFirstTypeItemBinding;
+import com.example.digikalastore.databinding.HeaderAdapterSecondTypeItemBinding;
 import com.example.digikalastore.model.Product;
+import com.smarteist.autoimageslider.SliderView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderHolder> {
+public class HeaderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    public static final int VIEW_TYPE_ONE = 1;
+    public static final int VIEW_TYPE_TWO = 2;
 
     private Context mContext;
     private HashMap<String, List<Product>> mItems;
-    private SetItemClickedListener mListener;
     private List<String> mHeaders;
+    private List<Product> mProducts;
+    private SetItemClickedListener mListener;
 
     public HeaderAdapter(Context context, HashMap<String, List<Product>> items, SetItemClickedListener listener) {
         mContext = context;
@@ -33,20 +40,58 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderHold
         mHeaders = headers;
     }
 
-    @NonNull
-    @Override
-    public HeaderHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new HeaderHolder(DataBindingUtil.inflate(
-                LayoutInflater.from(mContext),
-                R.layout.header_adapter_item,
-                parent,
-                false));
+    public List<String> getHeaders() {
+        return mHeaders;
+    }
+
+    public List<Product> getProducts() {
+        return mProducts;
+    }
+
+    public void setProducts(List<Product> products) {
+        mProducts = products;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HeaderHolder holder, int position) {
-        holder.bindHeader(mHeaders.get(position));
-        setProductRecyclerView(holder.mBinding.recyclerViewHeader, mItems.get(mHeaders.get(position)));
+    public int getItemViewType(int position) {
+        if (position == 2) {
+            return 2;
+        }
+        return 1;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_TWO) {
+            return new HeaderHolderTypeTwo(DataBindingUtil.inflate(
+                    LayoutInflater.from(mContext),
+                    R.layout.header_adapter_second_type_item, parent, false
+            ));
+        } else {
+
+            return new HeaderHolderTypeOne(DataBindingUtil.inflate(
+                    LayoutInflater.from(mContext),
+                    R.layout.header_adapter_first_type_item,
+                    parent,
+                    false));
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof HeaderHolderTypeOne) {
+            ((HeaderHolderTypeOne) holder).bindHeader(mHeaders.get(position));
+            setProductRecyclerView(((HeaderHolderTypeOne) holder).mBinding.recyclerViewHeader, mItems.get(mHeaders.get(position)));
+        }
+        if (holder instanceof HeaderHolderTypeTwo) {
+            ((HeaderHolderTypeTwo) holder).bindHeader(mHeaders.get(position));
+            List<String> imageUrls = new ArrayList<>();
+            for (Product product : mProducts) {
+                imageUrls.addAll(product.getImageUrl());
+            }
+            setSlider(((HeaderHolderTypeTwo) holder).mBinding.sliderViewFeaturedProduct, imageUrls);
+        }
     }
 
     @Override
@@ -54,11 +99,25 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderHold
         return mItems.size();
     }
 
-    public class HeaderHolder extends RecyclerView.ViewHolder {
+    public class HeaderHolderTypeOne extends RecyclerView.ViewHolder {
 
-        private HeaderAdapterItemBinding mBinding;
+        private HeaderAdapterFirstTypeItemBinding mBinding;
 
-        public HeaderHolder(HeaderAdapterItemBinding binding) {
+        public HeaderHolderTypeOne(HeaderAdapterFirstTypeItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        public void bindHeader(String header) {
+            mBinding.setHeader(header);
+        }
+    }
+
+    public class HeaderHolderTypeTwo extends RecyclerView.ViewHolder {
+
+        private HeaderAdapterSecondTypeItemBinding mBinding;
+
+        public HeaderHolderTypeTwo(HeaderAdapterSecondTypeItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }
@@ -85,6 +144,11 @@ public class HeaderAdapter extends RecyclerView.Adapter<HeaderAdapter.HeaderHold
                     }
                 });
         recyclerView.setAdapter(adapter);
+    }
+
+    public void setSlider(SliderView sliderView, List<String> imsgeUrls) {
+        ImageSliderAdapter adapter = new ImageSliderAdapter(mContext, imsgeUrls);
+        sliderView.setSliderAdapter(adapter);
     }
 
     public interface SetItemClickedListener {

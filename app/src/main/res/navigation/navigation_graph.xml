@@ -15,7 +15,11 @@
             app:destination="@id/categoryFragment" />
         <action
             android:id="@+id/action_homeFragment_to_productDetailFragment"
-            app:destination="@id/productDetailFragment" />
+            app:destination="@id/productDetailFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
     <fragment
         android:id="@+id/categoryFragment"
@@ -28,6 +32,9 @@
         <action
             android:id="@+id/action_categoryFragment_to_allCategoryProductsFragment"
             app:destination="@id/allCategoryProductsFragment" />
+        <action
+            android:id="@+id/action_categoryFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
@@ -53,6 +60,17 @@
             app:destination="@id/productDetailFragment" />
         <action
             android:id="@+id/action_allCategoryProductsFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="com.example.digikalastore.view.fragment.CartFragment"
+        android:label="CartFragment" >
+        <action
+            android:id="@+id/action_cartFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_cartFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
 </navigation>

@@ -49,13 +49,16 @@ public class ProductListDeserializer implements JsonDeserializer<List<Product>> 
             String productAverageRating = productObject.get("average_rating").getAsString();
             String productStockStatus = productObject.get("stock_status").getAsString();
 
+            boolean isFeatured = productObject.get("featured").getAsBoolean();
+
             Product product = new Product(
                     productName,
                     productId,
                     productImageUrls,
                     productDescription,
                     productPrice,
-                    productAverageRating);
+                    productAverageRating,
+                    isFeatured);
 
             product.setRatingCount(productRatingCount);
             JsonArray categories = productObject.get("categories").getAsJsonArray();

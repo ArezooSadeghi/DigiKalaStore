@@ -26,6 +26,11 @@ public class ProductViewModel extends AndroidViewModel {
     private ProductRepository mRepository;
     private List<Product> mProducts;
 
+    private List<Product> mProductList;
+    private LiveData<List<Product>> mProductListLiveData;
+
+
+
 
     private LiveData<HashMap<String, List<Product>>> mResponseLiveData;
 
@@ -39,8 +44,19 @@ public class ProductViewModel extends AndroidViewModel {
         mCategoryLiveData = mRepository.getCategoryLiveData();
         mRetrieveProductLiveData = mRepository.getRetrieveProductLiveData();
 
+        mProductList = mRepository.getProductList();
+        mProductListLiveData = mRepository.getProductListLiveData();
+
 
         mResponseLiveData = mRepository.getResponseLiveData();
+    }
+
+    public List<Product> getProductList() {
+        return mProductList;
+    }
+
+    public LiveData<List<Product>> getProductListLiveData() {
+        return mProductListLiveData;
     }
 
     public LiveData<Product> getRetrieveProductLiveData() {
@@ -77,9 +93,9 @@ public class ProductViewModel extends AndroidViewModel {
         return mCategoryLiveData;
     }
 
-    public void fetchProductAsync() {
+    /*public void fetchProductAsync() {
         mRepository.fetchProductAsync();
-    }
+    }*/
 
     public Product getProduct(int productId) {
         return mRepository.getProduct(productId);
@@ -124,5 +140,9 @@ public class ProductViewModel extends AndroidViewModel {
 
     public Observable<List<Product>> getMostVisitedProductsObservable() {
         return mRepository.getMostVisitedProductsObservable();
+    }
+
+    public Observable<List<Product>> getFeaturedProductsObservable() {
+        return mRepository.getFeaturedProductsObservable();
     }
 }

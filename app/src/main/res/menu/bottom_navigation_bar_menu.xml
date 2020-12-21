@@ -10,4 +10,9 @@
         android:icon="@drawable/ic_category"
         android:title="@string/category_title_item" />
 
+    <item
+        android:id="@+id/item_cart"
+        android:icon="@drawable/ic_cart"
+        android:title="@string/cart_title_item" />
+
 </menu>

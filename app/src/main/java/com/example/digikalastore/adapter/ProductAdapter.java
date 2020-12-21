@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.AllCategoryProductsItemBinding;
+import com.example.digikalastore.databinding.CartRecyclerViewItemBinding;
 import com.example.digikalastore.databinding.FragmentAllCategoryProductsBinding;
 import com.example.digikalastore.databinding.ProductCategoryRecyclerViewItemBinding;
 import com.example.digikalastore.databinding.ProductRelatedCategoryRecyclerViewItemBinding;
@@ -71,10 +72,17 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     R.layout.product_related_category_recycler_view_item,
                     parent,
                     false));
-        } else {
+        }
+        if (viewType == 3) {
             return new ViewHolderThree(DataBindingUtil.inflate(
                     LayoutInflater.from(mContext),
                     R.layout.result_search_product_item,
+                    parent,
+                    false));
+        } else {
+            return new ViewHolderFour(DataBindingUtil.inflate(
+                    LayoutInflater.from(mContext),
+                    R.layout.cart_recycler_view_item,
                     parent,
                     false));
         }
@@ -107,6 +115,10 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     mCallbcak.productCategoryItemClicked(mProducts.get(position).getId());
                 }
             });
+
+
+        } else if (holder instanceof ViewHolderFour) {
+            ((ViewHolderFour) holder).bindProduct(mProducts.get(position));
         }
     }
 
@@ -144,8 +156,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
         public void bindProductTwo(Product product) {
-            mBinding.txtProductSimpleName.setText(product.getName());
-            Picasso.get().load(product.getImageUrl().get(0)).into(mBinding.imgProduct);
+            mBinding.setProduct(product);
         }
     }
 
@@ -154,6 +165,20 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         private ResultSearchProductItemBinding mBinding;
 
         public ViewHolderThree(ResultSearchProductItemBinding binding) {
+            super(binding.getRoot());
+            mBinding = binding;
+        }
+
+        public void bindProduct(Product product) {
+            mBinding.setProduct(product);
+        }
+    }
+
+    public class ViewHolderFour extends RecyclerView.ViewHolder {
+
+        private CartRecyclerViewItemBinding mBinding;
+
+        public ViewHolderFour(CartRecyclerViewItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }

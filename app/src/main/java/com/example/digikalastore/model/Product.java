@@ -22,17 +22,19 @@ public class Product implements Serializable {
     private ArrayList<Tag> mTags;
     private String mAverageRate;
     private String mStockStatus;
+    private boolean mIsFeatured;
 
     public Product() {
     }
 
-    public Product(String name, int id, List<String> imageUrl, String description, String price, String AverageRate) {
+    public Product(String name, int id, List<String> imageUrl, String description, String price, String AverageRate, boolean isFeatured) {
         mName = name;
         mId = id;
         mImageUrl = imageUrl;
         mDescription = description;
         mPrice = price;
         mAverageRate = AverageRate;
+        mIsFeatured = isFeatured;
     }
 
     public String getAverageRate() {
@@ -113,6 +115,14 @@ public class Product implements Serializable {
 
     public void setRatingCount(int ratingCount) {
         mRatingCount = ratingCount;
+    }
+
+    public boolean isFeatured() {
+        return mIsFeatured;
+    }
+
+    public void setFeatured(boolean featured) {
+        mIsFeatured = featured;
     }
 
     @BindingAdapter("productImage")

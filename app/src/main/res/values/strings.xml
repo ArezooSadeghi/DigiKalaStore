@@ -4,9 +4,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_title_item">خانه</string>
     <string name="category_title_item">دسته بندی ها</string>
+    <string name="cart_title_item">سبد خرید</string>
     <string name="best_products_header">بهترین محصولات</string>
     <string name="latest_products_header">جدیدترین محصولات</string>
     <string name="most_visited_products_header">پر بازدیدترین محصولات</string>
+    <string name="featured_products_header">محصولات ویژه</string>
     <string name="specifications">مشخصات کلی</string>
     <string name="search_hint">جستجو در دیجی کالا</string>
     <string name="search_item_title">Search</string>
@@ -22,4 +24,7 @@
     <string name="asc_order_by_price">قیمت از کم به زیاد</string>
     <string name="order_by_sale">پرفروش ترین ها</string>
     <string name="order_by_date">جدیدترین ها</string>
+    <string name="text_button">افزودن به سبد خرید</string>
+    <string name="number">1</string>
+    <string name="text_sale">در سبد شما</string>
 </resources>

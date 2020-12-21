@@ -43,6 +43,9 @@ public class ProductRepository {
     private Context mContext;
 
 
+    private MutableLiveData<List<Product>> mProductListLiveData = new MutableLiveData<>();
+    private List<Product> mProductList;
+
     private HashMap<String, List<Product>> mItems = new HashMap<>();
     private MutableLiveData<HashMap<String, List<Product>>> mResponseLiveData = new MutableLiveData<>();
 
@@ -61,6 +64,8 @@ public class ProductRepository {
                 new CategoryDeserializer()).create(CategoryService.class);
 
         mContext = context.getApplicationContext();
+        mProductList = new ArrayList<>();
+        mProductListLiveData.setValue(mProductList);
     }
 
     public static ProductRepository getInstance(Context context) {
@@ -108,6 +113,14 @@ public class ProductRepository {
         return mResponseLiveData;
     }
 
+    public MutableLiveData<List<Product>> getProductListLiveData() {
+        return mProductListLiveData;
+    }
+
+    public List<Product> getProductList() {
+        return mProductList;
+    }
+
     public void fetchProductsByCategory(int categoryId) {
         Call<List<Product>> call = mProductListService.getProductsByCategory(categoryId);
         call.enqueue(new Callback<List<Product>>() {
@@ -153,8 +166,8 @@ public class ProductRepository {
         });
     }
 
-    public void fetchProductAsync() {
-        Call<List<Product>> call = mProductListService.getProducts();
+    /*public void fetchProductAsync() {
+        Observable<List<Product>> call = mProductListService.getProducts();
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
@@ -167,7 +180,7 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
-    }
+    }*/
 
     public Product getProduct(int productId) {
         for (Product product : mProducts) {
@@ -244,5 +257,9 @@ public class ProductRepository {
 
     public Observable<List<Product>> getMostVisitedProductsObservable() {
         return mProductListService.getMostVisitedProducts();
+    }
+
+    public Observable<List<Product>> getFeaturedProductsObservable() {
+        return mProductListService.getProducts();
     }
 }
