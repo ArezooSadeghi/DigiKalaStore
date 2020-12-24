@@ -3,6 +3,7 @@ package com.example.digikalastore.repository;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.digikalastore.model.Category;
@@ -29,11 +30,14 @@ public class ProductRepository {
 
     public static final String TAG = ProductRepository.class.getSimpleName();
 
+    private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
+    private MutableLiveData<Integer> mTotalPageLiveData = new MutableLiveData<>();
+
+
     private MutableLiveData<List<Product>> mProductsByOrder = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductsLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
-    private MutableLiveData<List<Category>> mCategoryLiveData = new MutableLiveData<>();
     private MutableLiveData<Product> mRetrieveProductLiveData = new MutableLiveData<>();
     private List<Product> mProducts;
     private static ProductRepository sInstance;
@@ -46,26 +50,36 @@ public class ProductRepository {
     private MutableLiveData<List<Product>> mProductListLiveData = new MutableLiveData<>();
     private List<Product> mProductList;
 
+    private MutableLiveData<List<String>> mProductsPriceLiveData = new MutableLiveData<>();
+    private List<String> mProductsPrice;
+
     private HashMap<String, List<Product>> mItems = new HashMap<>();
     private MutableLiveData<HashMap<String, List<Product>>> mResponseLiveData = new MutableLiveData<>();
 
 
     private ProductRepository(Context context) {
         mProductListService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Product>>() {}.getType(),
+                new TypeToken<List<Product>>() {
+                }.getType(),
                 new ProductListDeserializer()).create(ProductService.class);
 
         mProductService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<Product>() {}.getType(),
+                new TypeToken<Product>() {
+                }.getType(),
                 new ProductDeserializer()).create(ProductService.class);
 
         mCategoryService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Category>>() {}.getType(),
+                new TypeToken<List<Category>>() {
+                }.getType(),
                 new CategoryDeserializer()).create(CategoryService.class);
 
         mContext = context.getApplicationContext();
+
         mProductList = new ArrayList<>();
         mProductListLiveData.setValue(mProductList);
+
+        mProductsPrice = new ArrayList<>();
+        mProductsPriceLiveData.setValue(mProductsPrice);
     }
 
     public static ProductRepository getInstance(Context context) {
@@ -74,6 +88,19 @@ public class ProductRepository {
         }
         return sInstance;
     }
+
+
+
+    public MutableLiveData<Integer> getTotalPageLiveData() {
+        return mTotalPageLiveData;
+    }
+
+    public MutableLiveData<List<Category>> getCategoryLiveData() {
+        return mCategoryLiveData;
+    }
+
+
+
 
     public List<Product> getProducts() {
         return mProducts;
@@ -91,9 +118,6 @@ public class ProductRepository {
         return mProductsLiveData;
     }
 
-    public MutableLiveData<List<Category>> getCategoryLiveData() {
-        return mCategoryLiveData;
-    }
 
     public MutableLiveData<List<Product>> getProductsByOrder() {
         return mProductsByOrder;
@@ -111,6 +135,14 @@ public class ProductRepository {
 
     public MutableLiveData<HashMap<String, List<Product>>> getResponseLiveData() {
         return mResponseLiveData;
+    }
+
+    public MutableLiveData<List<String>> getProductsPriceLiveData() {
+        return mProductsPriceLiveData;
+    }
+
+    public List<String> getProductsPrice() {
+        return mProductsPrice;
     }
 
     public MutableLiveData<List<Product>> getProductListLiveData() {
@@ -136,20 +168,6 @@ public class ProductRepository {
         });
     }
 
-    public void fetchCategories() {
-        Call<List<Category>> call = mCategoryService.getCategories();
-        call.enqueue(new Callback<List<Category>>() {
-            @Override
-            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
-                mCategoryLiveData.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<Category>> call, Throwable t) {
-                Log.e(TAG, t.getMessage(), t);
-            }
-        });
-    }
 
     public void fetchSearchingProductsAsync(String query) {
         Call<List<Product>> call = mProductListService.serarchProducts(query);
@@ -166,13 +184,15 @@ public class ProductRepository {
         });
     }
 
-    /*public void fetchProductAsync() {
-        Observable<List<Product>> call = mProductListService.getProducts();
+    public void fetchProductAsync() {
+        Call<List<Product>> call = mProductListService.getPeoducts();
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                mProducts = response.body();
-                mProductsLiveData.setValue(response.body());
+                Log.d("Arezoo", response.headers().get("X-WP-Total"));
+                Log.d("Arezoo", response.headers().get("X-WP-TotalPages"));
+                /*mProducts = response.body();
+                mProductsLiveData.setValue(response.body());*/
             }
 
             @Override
@@ -180,7 +200,7 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
-    }*/
+    }
 
     public Product getProduct(int productId) {
         for (Product product : mProducts) {
@@ -260,6 +280,23 @@ public class ProductRepository {
     }
 
     public Observable<List<Product>> getFeaturedProductsObservable() {
-        return mProductListService.getProducts();
+        return mProductListService.getAllProducts();
+    }
+
+
+    public void fetchCategories(int page) {
+        Call<List<Category>> call = mCategoryService.getCategories(page);
+        call.enqueue(new Callback<List<Category>>() {
+            @Override
+            public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                mCategoryLiveData.setValue(response.body());
+                mTotalPageLiveData.setValue(Integer.valueOf(response.headers().values("x-wp-totalpages").get(0)));
+            }
+
+            @Override
+            public void onFailure(Call<List<Category>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
     }
 }

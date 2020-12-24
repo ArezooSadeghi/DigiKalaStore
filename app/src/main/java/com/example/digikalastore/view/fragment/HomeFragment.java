@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment {
 
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
 
+
         zip();
     }
 
@@ -81,6 +82,13 @@ public class HomeFragment extends Fragment {
         initToolbar();
 
         initRecyclerView();
+
+        mBinding.recyclerViewHeader.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
         return mBinding.getRoot();
     }

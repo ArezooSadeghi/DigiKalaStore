@@ -1,7 +1,6 @@
 package com.example.digikalastore.view.fragment;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,9 @@ import com.example.digikalastore.viewmodel.ProductViewModel;
 import java.util.List;
 
 public class AllCategoryProductsFragment extends Fragment {
+
+
+    private LinearLayoutManager mLayoutManager;
 
     private FragmentAllCategoryProductsBinding mBinding;
     private ProductViewModel mViewModel;
@@ -86,8 +88,10 @@ public class AllCategoryProductsFragment extends Fragment {
     }
 
     private void initViews() {
-        mBinding.recyclerViewAllCategoryProducts
-                .setLayoutManager(new LinearLayoutManager(getContext()));
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mBinding.recyclerViewAllCategoryProducts.setLayoutManager(mLayoutManager);
+        /*mBinding.recyclerViewAllCategoryProducts
+                .setLayoutManager(new LinearLayoutManager(getContext()));*/
     }
 
     private void setupAdapter(List<Product> products) {

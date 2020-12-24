@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.CategoryAdapter;
@@ -23,15 +24,21 @@ import com.example.digikalastore.databinding.FragmentCategoryBinding;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryFragment extends Fragment {
 
     private FragmentCategoryBinding mBinding;
     private ProductViewModel mViewModel;
+    private CategoryAdapter mAdapter;
+    private int mCurrentPage = 1;
+    private List<Category> mCategories = new ArrayList<>();
 
     public CategoryFragment() {
+
     }
+
 
     public static CategoryFragment newInstance() {
         CategoryFragment fragment = new CategoryFragment();
@@ -40,6 +47,7 @@ public class CategoryFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +55,8 @@ public class CategoryFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        mViewModel.fetchCategories();
-
-        setObserver();
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,16 +68,34 @@ public class CategoryFragment extends Fragment {
                 container,
                 false);
 
+
         initToolBar();
         initRecyclerView();
+        setupAdapter(mCategories);
+        getCategories();
+
+
+        mBinding.recyclerViewCategory.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                if (!mBinding.recyclerViewCategory.canScrollVertically(1)) {
+                    if (mCurrentPage <= mViewModel.getTotalPageLiveData().getValue()) {
+                        mViewModel.fetchCategories(mCurrentPage);
+                        mCurrentPage++;
+                    }
+                }
+            }
+        });
 
         return mBinding.getRoot();
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -84,27 +108,20 @@ public class CategoryFragment extends Fragment {
         }
     }
 
-    private void setObserver() {
-        mViewModel.getCategoryLiveData().observe(this, new Observer<List<Category>>() {
-            @Override
-            public void onChanged(List<Category> categories) {
-                setupAdapter(categories);
-            }
-        });
-    }
 
     private void initToolBar() {
         ((AppCompatActivity) getActivity()).setSupportActionBar(mBinding.toolbarCategory);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(null);
     }
 
+
     public void initRecyclerView() {
         mBinding.recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
-    public void setupAdapter(List<Category> categories) {
 
-        CategoryAdapter adapter = new CategoryAdapter(getContext(), categories, new CategoryAdapter.SetItemClickListener() {
+    private void setupAdapter(List<Category> categories) {
+        mAdapter = new CategoryAdapter(getContext(), categories, new CategoryAdapter.SetItemClickListener() {
             @Override
             public void ItemClicked(int categoryId) {
                 CategoryFragmentDirections.ActionCategoryFragmentToAllCategoryProductsFragment action =
@@ -113,6 +130,34 @@ public class CategoryFragment extends Fragment {
                 NavHostFragment.findNavController(CategoryFragment.this).navigate(action);
             }
         });
-        mBinding.recyclerViewCategory.setAdapter(adapter);
+        mBinding.recyclerViewCategory.setAdapter(mAdapter);
+    }
+
+
+    public void getCategories() {
+        loadingVisibility();
+        mViewModel.fetchCategories(mCurrentPage);
+        mCurrentPage++;
+        mViewModel.getCategoryLiveData().observe(getViewLifecycleOwner(), new Observer<List<Category>>() {
+            @Override
+            public void onChanged(List<Category> categories) {
+                loadingVisibility();
+                int positionStart = mCategories.size();
+                mCategories.addAll(categories);
+                int itemCount = mCategories.size();
+                mAdapter.notifyItemRangeInserted(positionStart, itemCount);
+            }
+        });
+    }
+
+
+    private void loadingVisibility() {
+        if (mCurrentPage == 1)
+            if (mBinding.getIsLoading() != null && mBinding.getIsLoading())
+                mBinding.setIsLoading(false);
+            else
+                mBinding.setIsLoading(true);
+        else
+            mBinding.setIsLoading(false);
     }
 }

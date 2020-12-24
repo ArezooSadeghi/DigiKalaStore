@@ -1,24 +1,28 @@
 package com.example.digikalastore.adapter;
 
 import android.content.Context;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.databinding.AllCategoryProductsItemBinding;
 import com.example.digikalastore.databinding.CartRecyclerViewItemBinding;
-import com.example.digikalastore.databinding.FragmentAllCategoryProductsBinding;
 import com.example.digikalastore.databinding.ProductCategoryRecyclerViewItemBinding;
 import com.example.digikalastore.databinding.ProductRelatedCategoryRecyclerViewItemBinding;
 import com.example.digikalastore.databinding.ResultSearchProductItemBinding;
+import com.example.digikalastore.diffutils.ProductDiffUtilCallback;
+import com.example.digikalastore.event.AddEvent;
+import com.example.digikalastore.event.DeleteEvent;
+import com.example.digikalastore.event.RemoveEvent;
 import com.example.digikalastore.model.Product;
-import com.squareup.picasso.Picasso;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -119,12 +123,78 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (holder instanceof ViewHolderFour) {
             ((ViewHolderFour) holder).bindProduct(mProducts.get(position));
+            ((ViewHolderFour) holder).mBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EventBus.getDefault().post(new AddEvent());
+
+                    int numberOfProduct = getButtonText((ViewHolderFour) holder);
+
+                    if (getButtonText((ViewHolderFour) holder) == 1) {
+                        ((ViewHolderFour) holder).mBinding.btnDelete.setVisibility(View.GONE);
+                        ((ViewHolderFour) holder).mBinding.btnRemove.setVisibility(View.VISIBLE);
+                    }
+
+                    ((ViewHolderFour) holder).mBinding.btnNumberOfProduct.setText(++numberOfProduct + "");
+                }
+            });
+
+            ((ViewHolderFour) holder).mBinding.btnRemove.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EventBus.getDefault().post(new RemoveEvent());
+
+                    int numberOfProduct = getButtonText((ViewHolderFour) holder);
+
+                    if (numberOfProduct == 2) {
+                        ((ViewHolderFour) holder).mBinding.btnRemove.setVisibility(View.GONE);
+                        ((ViewHolderFour) holder).mBinding.btnDelete.setVisibility(View.VISIBLE);
+                    }
+
+                    ((ViewHolderFour) holder).mBinding.btnNumberOfProduct.setText(--numberOfProduct + "");
+                }
+            });
+
+            ((ViewHolderFour) holder).mBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EventBus.getDefault().post(new DeleteEvent(((ViewHolderFour) holder).mBinding.getProduct().getId()));
+                }
+            });
         }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty())
+            super.onBindViewHolder(holder, position, payloads);
+        else {
+            Bundle bundle = (Bundle) payloads.get(0);
+            for (String key : bundle.keySet()) {
+                ((ViewHolderFour) holder).bindProduct((Product) bundle.getSerializable(ProductDiffUtilCallback.PRODUCT_BUNDLE));
+            }
+        }
+    }
+
+    private int getButtonText(@NonNull ViewHolderFour holder) {
+        return Integer.parseInt(holder
+                .mBinding
+                .btnNumberOfProduct
+                .getText()
+                .toString());
     }
 
     @Override
     public int getItemCount() {
         return mProducts.size();
+    }
+
+    public void updateProducts(List<Product> newProducts) {
+        DiffUtil.DiffResult diffResult =
+                DiffUtil.calculateDiff(new ProductDiffUtilCallback(mProducts, newProducts));
+        diffResult.dispatchUpdatesTo(this);
+        mProducts.clear();
+        mProducts.addAll(newProducts);
     }
 
     @Override

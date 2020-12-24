@@ -14,7 +14,10 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.ActivityMainBinding;
+import com.example.digikalastore.event.AddEvent;
+import com.example.digikalastore.event.DeleteEvent;
 import com.example.digikalastore.event.Event;
+import com.example.digikalastore.event.RemoveEvent;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -80,6 +83,23 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe
     public void getNumber(Event event) {
         setBadge(++mNumber);
+    }
+
+    @Subscribe
+    public void getNumberWithAddEvent(AddEvent addEvent) {
+        setBadge(++mNumber);
+    }
+
+    @Subscribe
+    public void getNumberWithRemoveEvent(RemoveEvent removeEvent) {
+        setBadge(--mNumber);
+    }
+
+    @Subscribe
+    public void getNumberWithDeleteEvent(DeleteEvent deleteEvent) {
+        --mNumber;
+        BadgeDrawable badgeDrawable = mBinding.bottomNavigationView.getOrCreateBadge(R.id.item_cart);
+        badgeDrawable.setVisible(false);
     }
 
     public void setBadge(int number) {

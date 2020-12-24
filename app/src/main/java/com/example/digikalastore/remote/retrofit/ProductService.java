@@ -14,7 +14,11 @@ public interface  ProductService {
 
     @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
-    Observable<List<Product>> getProducts();
+    Observable<List<Product>> getAllProducts();
+
+    @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
+            "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
+    Call<List<Product>> getPeoducts();
 
     @GET("products/{id}?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
@@ -43,4 +47,8 @@ public interface  ProductService {
     @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa&orderby=popularity&order=desc")
     Observable<List<Product>> getMostVisitedProducts();
+
+    @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
+            "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
+    Call<List<Product>> getProductList(@Query("page") int page);
 }

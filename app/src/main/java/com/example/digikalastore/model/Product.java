@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Product implements Serializable {
+public class Product implements Serializable, Comparable {
 
     private String mName;
     private int mId;
@@ -128,5 +128,27 @@ public class Product implements Serializable {
     @BindingAdapter("productImage")
     public static void loadImage(ImageView view, String url) {
         Picasso.get().load(url).into(view);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Product product = (Product) o;
+
+        if (product.getName().equals(this.mName) &&
+                (product.getId() == this.mId) &&
+                (product.getRatingCount() == this.mRatingCount) &&
+                (product.getDescription().equals(this.mDescription)) &&
+                (product.getPrice().equals(this.mPrice)) &&
+                (product.getAverageRate().equals(this.mAverageRate)) &&
+                (product.getStockStatus().equals(this.mStockStatus)) &&
+                (product.isFeatured() == this.mIsFeatured) &&
+                (product.getImageUrl().equals(this.mImageUrl)) &&
+                (product.getCategory().equals(this.mCategory)) &&
+                (product.getTags().equals(this.mTags))) {
+
+            return 0;
+        } else {
+            return 1;
+        }
     }
 }

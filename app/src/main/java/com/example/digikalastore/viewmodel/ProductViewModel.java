@@ -17,17 +17,26 @@ import io.reactivex.Observable;
 
 public class ProductViewModel extends AndroidViewModel {
 
+
+    private LiveData<List<Category>> mCategoryLiveData;
+    private LiveData<Integer> mTotalPageLiveData;
+
+
+
     private LiveData<List<Product>> mProductsLiveData;
     private LiveData<List<Product>> mProductsByOrder;
     private LiveData<List<Product>> mSearchingProductsLiveData;
     private LiveData<List<Product>> mProductsByCategoryLiveData;
-    private LiveData<List<Category>> mCategoryLiveData;
+
     private LiveData<Product> mRetrieveProductLiveData;
     private ProductRepository mRepository;
     private List<Product> mProducts;
 
     private List<Product> mProductList;
     private LiveData<List<Product>> mProductListLiveData;
+
+    private List<String> mProductsPrice;
+    private LiveData<List<String>> mProductsPriceLiveData;
 
 
 
@@ -37,15 +46,23 @@ public class ProductViewModel extends AndroidViewModel {
     public ProductViewModel(@NonNull Application application) {
         super(application);
         mRepository = ProductRepository.getInstance(getApplication());
+
+        mCategoryLiveData = mRepository.getCategoryLiveData();
+        mTotalPageLiveData = mRepository.getTotalPageLiveData();
+
+
         mProductsLiveData = mRepository.getProductsLiveData();
         mProductsByOrder = mRepository.getProductsByOrder();
         mSearchingProductsLiveData = mRepository.getSearchingProductsLiveData();
         mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
-        mCategoryLiveData = mRepository.getCategoryLiveData();
+
         mRetrieveProductLiveData = mRepository.getRetrieveProductLiveData();
 
         mProductList = mRepository.getProductList();
         mProductListLiveData = mRepository.getProductListLiveData();
+
+        mProductsPrice = mRepository.getProductsPrice();
+        mProductsPriceLiveData = mRepository.getProductsPriceLiveData();
 
 
         mResponseLiveData = mRepository.getResponseLiveData();
@@ -88,14 +105,29 @@ public class ProductViewModel extends AndroidViewModel {
         return mResponseLiveData;
     }
 
+    public List<String> getProductsPrice() {
+        return mProductsPrice;
+    }
+
+    public LiveData<List<String>> getProductsPriceLiveData() {
+        return mProductsPriceLiveData;
+    }
+
+
 
     public LiveData<List<Category>> getCategoryLiveData() {
         return mCategoryLiveData;
     }
 
-    /*public void fetchProductAsync() {
+    public LiveData<Integer> getTotalPageLiveData() {
+        return mTotalPageLiveData;
+    }
+
+
+
+    public void fetchProductAsync() {
         mRepository.fetchProductAsync();
-    }*/
+    }
 
     public Product getProduct(int productId) {
         return mRepository.getProduct(productId);
@@ -113,9 +145,6 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository.fetchSearchingProductsAsync(query);
     }
 
-    public void fetchCategories() {
-        mRepository.fetchCategories();
-    }
 
     public void fetchProductsByCategory(int categoryId) {
         mRepository.fetchProductsByCategory(categoryId);
@@ -144,5 +173,10 @@ public class ProductViewModel extends AndroidViewModel {
 
     public Observable<List<Product>> getFeaturedProductsObservable() {
         return mRepository.getFeaturedProductsObservable();
+    }
+
+
+    public void fetchCategories(int page) {
+        mRepository.fetchCategories(page);
     }
 }
