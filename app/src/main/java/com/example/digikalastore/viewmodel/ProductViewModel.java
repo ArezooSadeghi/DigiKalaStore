@@ -10,6 +10,7 @@ import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.repository.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,26 +18,33 @@ import io.reactivex.Observable;
 
 public class ProductViewModel extends AndroidViewModel {
 
+    private ProductRepository mRepository;
+    private List<Product> mProductList;
+    private List<String> mProductPrice;
 
+    private LiveData<List<Product>> mSearchingProductLiveData;
+    private LiveData<List<String>> mProductPriceLiveData;
+    private LiveData<List<Product>> mProductListLiveData;
     private LiveData<List<Category>> mCategoryLiveData;
     private LiveData<Integer> mTotalPageLiveData;
 
 
 
+
+
     private LiveData<List<Product>> mProductsLiveData;
-    private LiveData<List<Product>> mProductsByOrder;
-    private LiveData<List<Product>> mSearchingProductsLiveData;
+    private LiveData<List<Product>> mProductByOrderLiveData;
     private LiveData<List<Product>> mProductsByCategoryLiveData;
 
     private LiveData<Product> mRetrieveProductLiveData;
-    private ProductRepository mRepository;
+
     private List<Product> mProducts;
 
-    private List<Product> mProductList;
-    private LiveData<List<Product>> mProductListLiveData;
 
-    private List<String> mProductsPrice;
-    private LiveData<List<String>> mProductsPriceLiveData;
+
+
+
+
 
 
 
@@ -47,41 +55,36 @@ public class ProductViewModel extends AndroidViewModel {
         super(application);
         mRepository = ProductRepository.getInstance(getApplication());
 
+        mSearchingProductLiveData = mRepository.getSearchingProductLiveData();
         mCategoryLiveData = mRepository.getCategoryLiveData();
         mTotalPageLiveData = mRepository.getTotalPageLiveData();
+        mProductByOrderLiveData = mRepository.getProductByOrderLiveData();
+        mProductListLiveData = mRepository.getProductListLiveData();
+        mProductPriceLiveData = mRepository.getProductPriceLiveData();
+
+        mProductList = mRepository.getProductList();
+        mProductPrice = mRepository.getProductPrice();
+
+
 
 
         mProductsLiveData = mRepository.getProductsLiveData();
-        mProductsByOrder = mRepository.getProductsByOrder();
-        mSearchingProductsLiveData = mRepository.getSearchingProductsLiveData();
+
         mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
 
         mRetrieveProductLiveData = mRepository.getRetrieveProductLiveData();
 
-        mProductList = mRepository.getProductList();
-        mProductListLiveData = mRepository.getProductListLiveData();
 
-        mProductsPrice = mRepository.getProductsPrice();
-        mProductsPriceLiveData = mRepository.getProductsPriceLiveData();
+
 
 
         mResponseLiveData = mRepository.getResponseLiveData();
     }
 
-    public List<Product> getProductList() {
-        return mProductList;
-    }
 
-    public LiveData<List<Product>> getProductListLiveData() {
-        return mProductListLiveData;
-    }
 
     public LiveData<Product> getRetrieveProductLiveData() {
         return mRetrieveProductLiveData;
-    }
-
-    public LiveData<List<Product>> getProductsByOrder() {
-        return mProductsByOrder;
     }
 
     public List<Product> getProducts() {
@@ -96,22 +99,12 @@ public class ProductViewModel extends AndroidViewModel {
         return mProductsByCategoryLiveData;
     }
 
-    public LiveData<List<Product>> getSearchingProductsLiveData() {
-        return mSearchingProductsLiveData;
-    }
-
-
     public LiveData<HashMap<String, List<Product>>> getResponseLiveData() {
         return mResponseLiveData;
     }
 
-    public List<String> getProductsPrice() {
-        return mProductsPrice;
-    }
 
-    public LiveData<List<String>> getProductsPriceLiveData() {
-        return mProductsPriceLiveData;
-    }
+
 
 
 
@@ -122,6 +115,31 @@ public class ProductViewModel extends AndroidViewModel {
     public LiveData<Integer> getTotalPageLiveData() {
         return mTotalPageLiveData;
     }
+
+    public LiveData<List<Product>> getProductByOrderLiveData() {
+        return mProductByOrderLiveData;
+    }
+
+    public LiveData<List<Product>> getSearchingProductLiveData() {
+        return mSearchingProductLiveData;
+    }
+
+    public LiveData<List<Product>> getProductListLiveData() {
+        return mProductListLiveData;
+    }
+
+    public LiveData<List<String>> getProductPriceLiveData() {
+        return mProductPriceLiveData;
+    }
+
+    public List<String> getProductPrice() {
+        return mProductPrice;
+    }
+
+    public List<Product> getProductList() {
+        return mProductList;
+    }
+
 
 
 
@@ -141,9 +159,6 @@ public class ProductViewModel extends AndroidViewModel {
         return mRepository.getProductsByCategory(categoryId);
     }
 
-    public void fetchSearchingProductsAsync(String query) {
-        mRepository.fetchSearchingProductsAsync(query);
-    }
 
 
     public void fetchProductsByCategory(int categoryId) {
@@ -151,9 +166,6 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
 
-    public void fetchProductsByOrder(String search, String orderby, String order) {
-        mRepository.fetchProductsByPrice(search, orderby, order);
-    }
 
     public void retrieveProduct(int productId) {
         mRepository.retrieveProduct(productId);
@@ -176,7 +188,21 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
 
+
     public void fetchCategories(int page) {
         mRepository.fetchCategories(page);
     }
+
+    public void fetchSearchingProducts(String search) {
+        mRepository.fetchSearchingProducts(search);
+    }
+
+    public ArrayList<String> getChildItemList() {
+        return mRepository.getChildItemList();
+    }
+
+    public void fetchProductsByOrder(String search, String orderby, String order) {
+        mRepository.fetchProductsByOrder(search, orderby, order);
+    }
+
 }

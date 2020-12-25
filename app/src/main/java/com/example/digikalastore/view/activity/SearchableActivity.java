@@ -1,26 +1,25 @@
 package com.example.digikalastore.view.activity;
 
+import android.app.Activity;
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.view.Window;
-import android.widget.AbsListView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.digikalastore.R;
-import com.example.digikalastore.adapter.ExpandableListViewAdapter;
 import com.example.digikalastore.adapter.ResultSearchProductAdapter;
 import com.example.digikalastore.databinding.ActivitySearchableBinding;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SearchableActivity extends AppCompatActivity {
@@ -28,15 +27,19 @@ public class SearchableActivity extends AppCompatActivity {
     private ProductViewModel mViewModel;
     private ActivitySearchableBinding mBinding;
     private String mQuery;
+    private String mOrderBy;
+
+    private static final int REQUEST_CODE_ACTIVITY_CONTAINER = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         super.onCreate(savedInstanceState);
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_searchable);
-        setSupportActionBar(mBinding.toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+
+        initToolBar();
+
         mBinding.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -45,91 +48,29 @@ public class SearchableActivity extends AppCompatActivity {
             }
         });
 
-        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        setObserver();
-
         handleIntent();
-        mBinding.txtToolbarTitle.setText(mQuery);
+        mBinding.setQuery(mQuery);
 
-        HashMap<String, ArrayList<String>> mChildList = new HashMap<>();
-        ArrayList<String> related = new ArrayList<String>();
-        related.add("پرفروش ترین ها");
-        related.add("قیمت از زیاد به کم");
-        related.add("قیمت از کم به زیاد");
-        related.add("جدیدترین ها");
-
-        mChildList.put("مرتب سازی", related);
-
-        ArrayList<String> mParentList = new ArrayList<>(mChildList.keySet());
-        mBinding.btnRelated.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ExpandableListViewAdapter adapter = new ExpandableListViewAdapter(SearchableActivity.this, mParentList, mChildList, new ExpandableListViewAdapter.SetItemClickListener() {
-                    @Override
-                    public void itemClicked(String text) {
-                        if (text.equals(getResources().getString(R.string.desc_order_by_price))) {
-
-                            mViewModel.fetchProductsByOrder(mQuery, "price", "desc");
-
-                        } else if (text.equals(getResources().getString(R.string.asc_order_by_price))) {
-
-                            mViewModel.fetchProductsByOrder(mQuery, "price", "asc");
-
-                        } else if (text.equals(getResources().getString(R.string.order_by_sale))) {
-
-                            mViewModel.fetchProductsByOrder(mQuery, "popularity", "desc");
-
-                        } else if (text.equals(getResources().getString(R.string.order_by_date))) {
-
-                            mViewModel.fetchProductsByOrder(mQuery, "date", "desc");
-
-                        }
-                    }
-                });
-                mBinding.expandable.setAdapter(adapter);
-            }
-        });
-
-        mBinding.listViewResultSearch.setOnScrollListener(new AbsListView.OnScrollListener() {
-            int mLastFirstVisibleItem = 0;
-            @Override
-            public void onScrollStateChanged(AbsListView absListView, int i) {
-            }
-
-            @Override
-            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
-                if (absListView.getId() == mBinding.listViewResultSearch.getId()) {
-                    final int currentFirstVisibleItem = mBinding.listViewResultSearch.getFirstVisiblePosition();
-
-                    if (currentFirstVisibleItem > mLastFirstVisibleItem) {
-                        getSupportActionBar().hide();
-                    } else if (currentFirstVisibleItem < mLastFirstVisibleItem) {
-                        getSupportActionBar().show();
-                    }
-                    mLastFirstVisibleItem = currentFirstVisibleItem;
-                }
-
-            }
-        });
-
-
+        setObserver();
+        setListener();
     }
 
-    private void setObserver() {
-        mViewModel.getSearchingProductsLiveData().observe(this, new Observer<List<Product>>() {
-            @Override
-            public void onChanged(List<Product> products) {
-                setupAdapter(products);
-            }
-        });
-
-       mViewModel.getProductsByOrder().observe(this, new Observer<List<Product>>() {
-           @Override
-           public void onChanged(List<Product> products) {
-               setupAdapter(products);
-           }
-       });
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_ACTIVITY_CONTAINER && resultCode == Activity.RESULT_OK) {
+            mOrderBy = data.getStringExtra(ActivityContainer.EXTRA_TEXT);
+            fetchData(mOrderBy);
+        }
     }
+
+
+    private void initToolBar() {
+        setSupportActionBar(mBinding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
 
     private void handleIntent() {
         Intent intent = getIntent();
@@ -139,12 +80,80 @@ public class SearchableActivity extends AppCompatActivity {
         }
     }
 
+
     private void doMySearch(String query) {
-        mViewModel.fetchSearchingProductsAsync(query);
+        loadingVisibility();
+        mViewModel.fetchSearchingProducts(query);
     }
+
+
+    private void setObserver() {
+        mViewModel.getSearchingProductLiveData().observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> products) {
+                loadingVisibility();
+                setupAdapter(products);
+            }
+        });
+
+        mViewModel.getProductByOrderLiveData().observe(this, new Observer<List<Product>>() {
+            @Override
+            public void onChanged(List<Product> products) {
+                setupAdapter(products);
+            }
+        });
+    }
+
+
+    private void setListener() {
+        mBinding.btnRelated.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = ActivityContainer.newIntent(SearchableActivity.this);
+                startActivityForResult(intent, REQUEST_CODE_ACTIVITY_CONTAINER);
+            }
+        });
+    }
+
+    public void fetchData(String orderBy) {
+        loadingVisibility();
+
+        if (orderBy.equals(getResources().getString(R.string.desc_order_by_price))) {
+
+            mViewModel.fetchProductsByOrder(mQuery, "price", "desc");
+
+        } else if (orderBy.equals(getResources().getString(R.string.asc_order_by_price))) {
+
+            mViewModel.fetchProductsByOrder(mQuery, "price", "asc");
+
+        } else if (orderBy.equals(getResources().getString(R.string.order_by_sale))) {
+
+            mViewModel.fetchProductsByOrder(mQuery, "popularity", "desc");
+
+        } else if (orderBy.equals(getResources().getString(R.string.order_by_date))) {
+
+            mViewModel.fetchProductsByOrder(mQuery, "date", "desc");
+
+        }
+
+    }
+
 
     private void setupAdapter(List<Product> products) {
         ResultSearchProductAdapter adapter = new ResultSearchProductAdapter(this, products);
         mBinding.listViewResultSearch.setAdapter(adapter);
+    }
+
+
+    private void loadingVisibility() {
+        if (mBinding.getIsLoading() != null && mBinding.getIsLoading())
+            mBinding.setIsLoading(false);
+        else
+            mBinding.setIsLoading(true);
+    }
+
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, SearchableActivity.class);
     }
 }

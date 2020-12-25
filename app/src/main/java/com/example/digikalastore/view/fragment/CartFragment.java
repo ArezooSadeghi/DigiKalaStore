@@ -18,6 +18,7 @@ import com.example.digikalastore.adapter.ProductAdapter;
 import com.example.digikalastore.databinding.FragmentCartBinding;
 import com.example.digikalastore.event.AddEvent;
 import com.example.digikalastore.event.DeleteEvent;
+import com.example.digikalastore.event.RemoveEvent;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
@@ -32,9 +33,6 @@ public class CartFragment extends Fragment {
     private FragmentCartBinding mBinding;
     private ProductViewModel mViewModel;
     private ProductAdapter mAdapter;
-
-    public CartFragment() {
-    }
 
 
     public static CartFragment newInstance() {
@@ -81,12 +79,23 @@ public class CartFragment extends Fragment {
 
     @Subscribe
     public void updateRecyclerView(DeleteEvent deleteEvent) {
-        for (int i = 0; i < mViewModel.getProductList().size(); i++) {
-            if (mViewModel.getProductList().get(i).getId() == deleteEvent.getProductId()) {
-                mViewModel.getProductList().remove(i);
-            }
-        }
-        setObserver();
+        mViewModel.getProductList().remove(deleteEvent.getProduct());
+        mViewModel.getProductPrice().remove(deleteEvent.getProduct().getPrice());
+        calculatePrice(mViewModel.getProductPrice());
+        setupAdapter(mViewModel.getProductList());
+    }
+
+    @Subscribe
+    public void addPrice(AddEvent addEvent) {
+        mViewModel.getProductPrice().add(addEvent.getProductPrice());
+        calculatePrice(mViewModel.getProductPrice());
+    }
+
+
+    @Subscribe
+    public void removePrice(RemoveEvent removeEvent) {
+        mViewModel.getProductPrice().remove(removeEvent.getProductPrice());
+        calculatePrice(mViewModel.getProductPrice());
     }
 
     private void setObserver() {
@@ -97,18 +106,10 @@ public class CartFragment extends Fragment {
             }
         });
 
-        mViewModel.getProductsPriceLiveData().observe(this, new Observer<List<String>>() {
+        mViewModel.getProductPriceLiveData().observe(this, new Observer<List<String>>() {
             @Override
-            public void onChanged(List<String> productsPrice) {
-                double totalPrice = 0;
-                List<Double> calculateTotalPrice = new ArrayList<>();
-                for (String price:productsPrice) {
-                    calculateTotalPrice.add(Double.parseDouble(price));
-                }
-                for (Double price:calculateTotalPrice) {
-                    totalPrice += price;
-                }
-                mBinding.txtTotalPrice.setText(getString(R.string.total_price) + ":" + totalPrice + ":" + getString(R.string.currency));
+            public void onChanged(List<String> productPrice) {
+                calculatePrice(productPrice);
             }
         });
     }
@@ -123,5 +124,17 @@ public class CartFragment extends Fragment {
     private void setupAdapter(List<Product> products) {
         mAdapter = new ProductAdapter(getContext(), products, 4);
         mBinding.recyclerViewCart.setAdapter(mAdapter);
+    }
+
+    private void calculatePrice(List<String> productPrice) {
+        double totalPrice = 0;
+        List<Double> calculateTotalPrice = new ArrayList<>();
+        for (String price : productPrice) {
+            calculateTotalPrice.add(Double.parseDouble(price));
+        }
+        for (Double price : calculateTotalPrice) {
+            totalPrice += price;
+        }
+        mBinding.setTotalPrice(Double.toString(totalPrice));
     }
 }

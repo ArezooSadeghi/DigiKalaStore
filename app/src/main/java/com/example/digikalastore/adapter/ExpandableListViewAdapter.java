@@ -5,9 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.TextView;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.example.digikalastore.R;
+import com.example.digikalastore.databinding.ChildGroupBinding;
+import com.example.digikalastore.databinding.ParentGroupBinding;
+import com.example.digikalastore.event.ClickEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,39 +21,33 @@ import java.util.HashMap;
 public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     private Context mContext;
-    private ArrayList<String> mGroupList;
+    private ArrayList<String> mParentList;
     private HashMap<String, ArrayList<String>> mChildList;
-    private SetItemClickListener mListener;
 
-    public ExpandableListViewAdapter(Context context, ArrayList<String> groupList, HashMap<String, ArrayList<String>> childList, SetItemClickListener listener) {
+    public ExpandableListViewAdapter(Context context, ArrayList<String> parentList, HashMap<String, ArrayList<String>> childList) {
         mContext = context;
-        mGroupList = groupList;
+        mParentList = parentList;
         mChildList = childList;
-        mListener = listener;
-    }
-
-    public void setListener(SetItemClickListener listener) {
-        mListener = listener;
     }
 
     @Override
     public int getGroupCount() {
-        return mGroupList.size();
+        return mParentList.size();
     }
 
     @Override
     public int getChildrenCount(int i) {
-        return mChildList.get(mGroupList.get(i)).size();
+        return mChildList.get(mParentList.get(i)).size();
     }
 
     @Override
     public Object getGroup(int i) {
-        return mGroupList.get(i);
+        return mParentList.get(i);
     }
 
     @Override
     public Object getChild(int i, int i1) {
-        return mChildList.get(mGroupList.get(i)).get(i1);
+        return mChildList.get(mParentList.get(i)).get(i1);
     }
 
     @Override
@@ -67,33 +67,34 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(mContext).inflate(
+        ParentGroupBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mContext),
                 R.layout.parent_group,
                 viewGroup,
                 false);
 
-        TextView textView = view.findViewById(R.id.txt_parent_group);
-        textView.setText(String.valueOf(getGroup(i)));
-        return view;
+        binding.setText(String.valueOf(getGroup(i)));
+        return binding.getRoot();
     }
 
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
-        view = LayoutInflater.from(mContext).inflate(
+        ChildGroupBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(mContext),
                 R.layout.child_group,
                 viewGroup,
                 false);
-        TextView textView = view.findViewById(R.id.txt_child_group);
-        textView.setText(String.valueOf(getChild(i, i1)));
 
-        view.setOnClickListener(new View.OnClickListener() {
+        binding.setText(String.valueOf(getChild(i, i1)));
+
+        binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.itemClicked(textView.getText().toString());
+                EventBus.getDefault().post(new ClickEvent(binding.getText()));
             }
         });
 
-        return view;
+        return binding.getRoot();
     }
 
     @Override
@@ -101,7 +102,4 @@ public class ExpandableListViewAdapter extends BaseExpandableListAdapter {
         return false;
     }
 
-    public interface SetItemClickListener {
-        void itemClicked(String text);
-    }
 }

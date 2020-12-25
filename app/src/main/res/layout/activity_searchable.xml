@@ -5,21 +5,30 @@
 
     <data>
 
+        <variable
+            name="query"
+            type="String" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+
+        <import type="android.view.View" />
+
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
@@ -34,7 +43,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="16dp"
-                        android:gravity="right" />
+                        android:gravity="right"
+                        android:text="@{query}" />
+
                 </androidx.appcompat.widget.Toolbar>
 
                 <RelativeLayout
@@ -50,11 +61,10 @@
                         android:layout_alignParentLeft="true"
                         android:layout_marginLeft="5dp"
                         android:text="@string/related"
-                        app:icon="@drawable/ic_sort">
-
-                    </Button>
+                        app:icon="@drawable/ic_sort" />
 
                     <Button
+                        android:id="@+id/btn_filter"
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -62,29 +72,25 @@
                         android:layout_marginRight="5dp"
                         android:text="@string/filter"
                         app:icon="@drawable/ic_filter" />
+
                 </RelativeLayout>
 
-            </LinearLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
-            <ExpandableListView
-                android:id="@+id/expandable"
+            <ListView
+                android:id="@+id/list_view_result_search"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@android:color/darker_gray"
-                android:background="@color/white"
-                android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft" />
+                android:layout_height="wrap_content"
+                tools:context=".view.activity.SearchableActivity" />
 
+        </LinearLayout>
 
-        </com.google.android.material.appbar.AppBarLayout>
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{isLoading ? View.VISIBLE : View.GONE, default=gone}" />
 
-
-        <ListView
-            android:id="@+id/list_view_result_search"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".view.activity.SearchableActivity">
-
-        </ListView>
-    </LinearLayout>
+    </FrameLayout>
 
 </layout>

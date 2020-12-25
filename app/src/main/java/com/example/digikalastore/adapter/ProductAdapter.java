@@ -2,6 +2,7 @@ package com.example.digikalastore.adapter;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,7 +127,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((ViewHolderFour) holder).mBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EventBus.getDefault().post(new AddEvent());
+                    EventBus.getDefault().post(new AddEvent(((ViewHolderFour) holder).mBinding.getProduct().getPrice()));
 
                     int numberOfProduct = getButtonText((ViewHolderFour) holder);
 
@@ -142,7 +143,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((ViewHolderFour) holder).mBinding.btnRemove.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EventBus.getDefault().post(new RemoveEvent());
+                    EventBus.getDefault().post(new RemoveEvent(((ViewHolderFour) holder).mBinding.getProduct().getPrice()));
 
                     int numberOfProduct = getButtonText((ViewHolderFour) holder);
 
@@ -158,7 +159,7 @@ public class ProductAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((ViewHolderFour) holder).mBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    EventBus.getDefault().post(new DeleteEvent(((ViewHolderFour) holder).mBinding.getProduct().getId()));
+                    EventBus.getDefault().post(new DeleteEvent(((ViewHolderFour) holder).mBinding.getProduct()));
                 }
             });
         }

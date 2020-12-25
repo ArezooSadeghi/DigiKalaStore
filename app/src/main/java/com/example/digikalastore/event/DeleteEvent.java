@@ -1,14 +1,16 @@
 package com.example.digikalastore.event;
 
+import com.example.digikalastore.model.Product;
+
 public class DeleteEvent {
 
-    private final int mProductId;
+    private final Product mProduct;
 
-    public DeleteEvent(int productId) {
-        mProductId = productId;
+    public DeleteEvent(Product product) {
+        mProduct = product;
     }
 
-    public int getProductId() {
-        return mProductId;
+    public Product getProduct() {
+        return mProduct;
     }
 }

@@ -76,7 +76,7 @@ public class ProductDetailFragment extends Fragment {
                 mBinding.btnAddToCart.setVisibility(View.GONE);
                 mBinding.showDetailOfSale.setVisibility(View.VISIBLE);
                 mViewModel.getProductList().add(mProduct);
-                mViewModel.getProductsPrice().add(mProduct.getPrice());
+                mViewModel.getProductPrice().add(mProduct.getPrice());
             }
         });
     }

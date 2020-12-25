@@ -28,4 +28,6 @@
     <string name="number">1</string>
     <string name="text_sale">در سبد شما</string>
     <string name="total_price">مجموع</string>
+    <string name="ordering">مرتب سازی</string>
+    <string name="empty_cart">سبد خرید شما خالی می باشد</string>
 </resources>
