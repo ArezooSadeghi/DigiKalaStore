@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">DigiKala Store</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="home_title_item">خانه</string>
     <string name="category_title_item">دسته بندی ها</string>
     <string name="cart_title_item">سبد خرید</string>
@@ -29,5 +27,8 @@
     <string name="text_sale">در سبد شما</string>
     <string name="total_price">مجموع</string>
     <string name="ordering">مرتب سازی</string>
-    <string name="empty_cart">سبد خرید شما خالی می باشد</string>
+    <string name="user_comments">نظرات کاربران</string>
+    <string name="no_comment">نظری برای این محصول ثبت نشده است</string>
+    <string name="submit_comment">ثبت نظر</string>
+    <string name="see_all_comments">مشاهده همه نظرات</string>
 </resources>

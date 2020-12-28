@@ -1,12 +1,18 @@
 package com.example.digikalastore.remote.retrofit;
 
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 
 import java.util.List;
 
 import io.reactivex.Observable;
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -49,10 +55,21 @@ public interface  ProductService {
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
     Call<List<Product>> getProductList(@Query("page") int page);
 
-
-
-
     @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
     Call<List<Product>> serarchProducts(@Query("search") String search);
+
+
+    @GET("products/reviews?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
+            "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
+    Call<List<Review>> getReviews(@Query("product") int product);
+
+    @FormUrlEncoded
+    @POST("products/reviews?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
+            "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
+    Call<Review> sendReview(@Field("product_id") int productId,
+                            @Field("review") String review,
+                            @Field("reviewer") String reviewer,
+                            @Field("reviewer_email") String reviewerEmail,
+                            @Field("rating") int rating);
 }

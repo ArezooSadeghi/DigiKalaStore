@@ -8,12 +8,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 import com.example.digikalastore.remote.retrofit.CategoryDeserializer;
 import com.example.digikalastore.remote.retrofit.CategoryService;
 import com.example.digikalastore.remote.retrofit.ProductDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductListDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductService;
 import com.example.digikalastore.remote.retrofit.RetrofitInstance;
+import com.example.digikalastore.remote.retrofit.ReviewDeserializer;
+import com.example.digikalastore.remote.retrofit.ReviewListDeserializer;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class ProductRepository {
     private Context mContext;
     private List<Product> mProductList;
     private List<String> mProductPrice;
+    private ProductService mReviewListService, mReviewService;
 
     private MutableLiveData<List<Product>> mProductByOrderLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductLiveData = new MutableLiveData<>();
@@ -41,11 +45,13 @@ public class ProductRepository {
     private MutableLiveData<Integer> mTotalPageLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductListLiveData = new MutableLiveData<>();
     private MutableLiveData<List<String>> mProductPriceLiveData = new MutableLiveData<>();
-
-
-
-
+    private MutableLiveData<List<Review>> mReviewLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
+
+
+
+
+
     private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
     private MutableLiveData<Product> mRetrieveProductLiveData = new MutableLiveData<>();
     private List<Product> mProducts;
@@ -80,6 +86,14 @@ public class ProductRepository {
                 new TypeToken<List<Category>>() {
                 }.getType(),
                 new CategoryDeserializer()).create(CategoryService.class);
+
+        mReviewListService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<List<Review>>() {}.getType(),
+                new ReviewListDeserializer()).create(ProductService.class);
+
+        mReviewService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<Review>() {}.getType(),
+                new ReviewDeserializer()).create(ProductService.class);
 
         mContext = context.getApplicationContext();
 
@@ -126,6 +140,14 @@ public class ProductRepository {
         return mProductListLiveData;
     }
 
+    public MutableLiveData<List<Review>> getReviewLiveData() {
+        return mReviewLiveData;
+    }
+
+    public MutableLiveData<List<Product>> getProductsLiveData() {
+        return mProductsLiveData;
+    }
+
     public List<Product> getProductList() {
         return mProductList;
     }
@@ -141,9 +163,7 @@ public class ProductRepository {
 
 
 
-    public MutableLiveData<List<Product>> getProductsLiveData() {
-        return mProductsLiveData;
-    }
+
 
 
     public List<Product> getProducts() {
@@ -188,26 +208,6 @@ public class ProductRepository {
         });
     }
 
-
-    
-
-    public void fetchProductAsync() {
-        Call<List<Product>> call = mProductListService.getPeoducts();
-        call.enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                Log.d("Arezoo", response.headers().get("X-WP-Total"));
-                Log.d("Arezoo", response.headers().get("X-WP-TotalPages"));
-                /*mProducts = response.body();
-                mProductsLiveData.setValue(response.body());*/
-            }
-
-            @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                Log.e(TAG, t.getMessage(), t);
-            }
-        });
-    }
 
     public Product getProduct(int productId) {
         for (Product product : mProducts) {
@@ -327,6 +327,55 @@ public class ProductRepository {
         });
     }
 
+
+    public void fetchReviews(int product) {
+        Call<List<Review>> call = mReviewListService.getReviews(product);
+        call.enqueue(new Callback<List<Review>>() {
+            @Override
+            public void onResponse(Call<List<Review>> call, Response<List<Review>> response) {
+                mReviewLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Review>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+    }
+
+
+    public void sendReview(int productId, String review, String reviewer, String reviewerEmail, int rating) {
+        Call<Review> call = mReviewService.sendReview(productId, review, reviewer, reviewerEmail, rating);
+        call.enqueue(new Callback<Review>() {
+            @Override
+            public void onResponse(Call<Review> call, Response<Review> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Arezoo", response.body() + "");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Review> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+    public void fetchProducts() {
+        Call<List<Product>> call = mProductListService.getPeoducts();
+        call.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+               mProductsLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+    }
 
     public ArrayList<String> getChildItemList() {
         return new ArrayList<String>() {{

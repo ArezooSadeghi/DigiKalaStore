@@ -7,19 +7,26 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.ImageSliderAdapter;
+import com.example.digikalastore.adapter.ReviewAdapter;
 import com.example.digikalastore.databinding.FragmentProductDetailBinding;
 import com.example.digikalastore.event.Event;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 public class ProductDetailFragment extends Fragment {
 
@@ -41,6 +48,8 @@ public class ProductDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
     }
 
@@ -54,6 +63,7 @@ public class ProductDetailFragment extends Fragment {
                 container,
                 false);
 
+        initRecyclerView();
         setListener();
 
         return mBinding.getRoot();
@@ -65,6 +75,8 @@ public class ProductDetailFragment extends Fragment {
         ProductDetailFragmentArgs args = ProductDetailFragmentArgs.fromBundle(getArguments());
         int productId = args.getProductId();
         mViewModel.retrieveProduct(productId);
+        mViewModel.fetchReviews(productId);
+        mViewModel.sendReview(productId, "Very Good", "Arezoo", "arezoo.sdghi@gmail.com", 4);
         setObserver();
     }
 
@@ -89,11 +101,36 @@ public class ProductDetailFragment extends Fragment {
                 initViews(product);
             }
         });
+
+        mViewModel.getReviewLiveData().observe(getViewLifecycleOwner(), new Observer<List<Review>>() {
+            @Override
+            public void onChanged(List<Review> reviews) {
+                setupAdapter(reviews);
+            }
+        });
     }
+
 
     private void initViews(Product product) {
         mBinding.setProduct(product);
         ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), product.getImageUrl());
         mBinding.imgProductSlider.setSliderAdapter(adapter);
+    }
+
+    private void initRecyclerView() {
+        mBinding.recyclerViewReviewProduct.setLayoutManager(new LinearLayoutManager(
+                getContext(),
+                RecyclerView.HORIZONTAL,
+                true));
+    }
+
+    private void setupAdapter(List<Review> reviews) {
+        if (reviews.size() == 0) {
+            mBinding.txtNoComment.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.txtNoComment.setVisibility(View.GONE);
+        }
+        ReviewAdapter adapter = new ReviewAdapter(getContext(), reviews);
+        mBinding.recyclerViewReviewProduct.setAdapter(adapter);
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
+import com.example.digikalastore.model.Review;
 import com.example.digikalastore.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -23,16 +24,18 @@ public class ProductViewModel extends AndroidViewModel {
     private List<String> mProductPrice;
 
     private LiveData<List<Product>> mSearchingProductLiveData;
+    private LiveData<List<Review>> mReviewLiveData;
     private LiveData<List<String>> mProductPriceLiveData;
     private LiveData<List<Product>> mProductListLiveData;
     private LiveData<List<Category>> mCategoryLiveData;
+    private LiveData<List<Product>> mProductsLiveData;
     private LiveData<Integer> mTotalPageLiveData;
 
 
 
 
 
-    private LiveData<List<Product>> mProductsLiveData;
+
     private LiveData<List<Product>> mProductByOrderLiveData;
     private LiveData<List<Product>> mProductsByCategoryLiveData;
 
@@ -56,11 +59,13 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository = ProductRepository.getInstance(getApplication());
 
         mSearchingProductLiveData = mRepository.getSearchingProductLiveData();
-        mCategoryLiveData = mRepository.getCategoryLiveData();
-        mTotalPageLiveData = mRepository.getTotalPageLiveData();
         mProductByOrderLiveData = mRepository.getProductByOrderLiveData();
-        mProductListLiveData = mRepository.getProductListLiveData();
         mProductPriceLiveData = mRepository.getProductPriceLiveData();
+        mProductListLiveData = mRepository.getProductListLiveData();
+        mTotalPageLiveData = mRepository.getTotalPageLiveData();
+        mCategoryLiveData = mRepository.getCategoryLiveData();
+        mProductsLiveData = mRepository.getProductsLiveData();
+        mReviewLiveData = mRepository.getReviewLiveData();
 
         mProductList = mRepository.getProductList();
         mProductPrice = mRepository.getProductPrice();
@@ -68,7 +73,7 @@ public class ProductViewModel extends AndroidViewModel {
 
 
 
-        mProductsLiveData = mRepository.getProductsLiveData();
+
 
         mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
 
@@ -89,10 +94,6 @@ public class ProductViewModel extends AndroidViewModel {
 
     public List<Product> getProducts() {
         return mRepository.getProducts();
-    }
-
-    public LiveData<List<Product>> getProductsLiveData() {
-        return mProductsLiveData;
     }
 
     public LiveData<List<Product>> getProductsByCategoryLiveData() {
@@ -120,6 +121,10 @@ public class ProductViewModel extends AndroidViewModel {
         return mProductByOrderLiveData;
     }
 
+    public LiveData<List<Review>> getReviewLiveData() {
+        return mReviewLiveData;
+    }
+
     public LiveData<List<Product>> getSearchingProductLiveData() {
         return mSearchingProductLiveData;
     }
@@ -130,6 +135,10 @@ public class ProductViewModel extends AndroidViewModel {
 
     public LiveData<List<String>> getProductPriceLiveData() {
         return mProductPriceLiveData;
+    }
+
+    public LiveData<List<Product>> getProductsLiveData() {
+        return mProductsLiveData;
     }
 
     public List<String> getProductPrice() {
@@ -143,9 +152,7 @@ public class ProductViewModel extends AndroidViewModel {
 
 
 
-    public void fetchProductAsync() {
-        mRepository.fetchProductAsync();
-    }
+
 
     public Product getProduct(int productId) {
         return mRepository.getProduct(productId);
@@ -189,6 +196,11 @@ public class ProductViewModel extends AndroidViewModel {
 
 
 
+
+    public void fetchProducts() {
+        mRepository.fetchProducts();
+    }
+
     public void fetchCategories(int page) {
         mRepository.fetchCategories(page);
     }
@@ -205,4 +217,11 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository.fetchProductsByOrder(search, orderby, order);
     }
 
+    public void fetchReviews(int product) {
+        mRepository.fetchReviews(product);
+    }
+
+    public void sendReview(int productId, String review, String reviewer, String reviewerEmail, int rating) {
+        mRepository.sendReview(productId, review, reviewer, reviewerEmail, rating);
+    }
 }

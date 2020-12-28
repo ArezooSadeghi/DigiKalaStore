@@ -19,6 +19,7 @@ public class Product implements Serializable, Comparable {
     private String mDescription;
     private String mPrice;
     private List<Category> mCategory;
+    private List<Review> mReviews;
     private ArrayList<Tag> mTags;
     private String mAverageRate;
     private String mStockStatus;
@@ -35,6 +36,14 @@ public class Product implements Serializable, Comparable {
         mPrice = price;
         mAverageRate = AverageRate;
         mIsFeatured = isFeatured;
+    }
+
+    public List<Review> getReviews() {
+        return mReviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        mReviews = reviews;
     }
 
     public String getAverageRate() {
