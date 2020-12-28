@@ -2,13 +2,15 @@ package com.example.digikalastore.model;
 
 public class Review {
 
+    private int mId;
     private int mProductId;
     private String mReviewContent;
     private String mReviewerName;
     private String mReviewerEmail;
     private int mRating;
 
-    public Review(int productId, String reviewContent, String reviewerName, String reviewerEmail, int rating) {
+    public Review(int id, int productId, String reviewContent, String reviewerName, String reviewerEmail, int rating) {
+        mId = id;
         mProductId = productId;
         mReviewContent = reviewContent;
         mReviewerName = reviewerName;
@@ -54,5 +56,13 @@ public class Review {
 
     public void setReviewerEmail(String reviewerEmail) {
         mReviewerEmail = reviewerEmail;
+    }
+
+    public int getId() {
+        return mId;
+    }
+
+    public void setId(int id) {
+        mId = id;
     }
 }

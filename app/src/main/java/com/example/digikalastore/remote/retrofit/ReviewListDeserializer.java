@@ -26,6 +26,7 @@ public class ReviewListDeserializer implements JsonDeserializer<List<Review>> {
         JsonArray bodyArray = json.getAsJsonArray();
         for (int i = 0; i < bodyArray.size(); i++) {
             JsonObject reviewObject = bodyArray.get(i).getAsJsonObject();
+            int id = reviewObject.get("id").getAsInt();
             int productId = reviewObject.get("product_id").getAsInt();
             String reviewContent = Html.fromHtml(reviewObject.get("review").getAsString()).toString();
             String reviewerName = reviewObject.get("reviewer").getAsString();
@@ -35,7 +36,7 @@ public class ReviewListDeserializer implements JsonDeserializer<List<Review>> {
 
 
 
-            Review review = new Review(productId, reviewContent, reviewerName, reviewerEmail, reviewRating);
+            Review review = new Review(id, productId, reviewContent, reviewerName, reviewerEmail, reviewRating);
             reviews.add(review);
         }
         return reviews;

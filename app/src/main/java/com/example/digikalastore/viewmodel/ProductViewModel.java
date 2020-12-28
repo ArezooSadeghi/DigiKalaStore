@@ -30,6 +30,7 @@ public class ProductViewModel extends AndroidViewModel {
     private LiveData<List<Category>> mCategoryLiveData;
     private LiveData<List<Product>> mProductsLiveData;
     private LiveData<Integer> mTotalPageLiveData;
+    private LiveData<Review> mReviewTestLiveData;
 
 
 
@@ -66,6 +67,7 @@ public class ProductViewModel extends AndroidViewModel {
         mCategoryLiveData = mRepository.getCategoryLiveData();
         mProductsLiveData = mRepository.getProductsLiveData();
         mReviewLiveData = mRepository.getReviewLiveData();
+        mReviewTestLiveData = mRepository.getReviewTestLiveData();
 
         mProductList = mRepository.getProductList();
         mProductPrice = mRepository.getProductPrice();
@@ -139,6 +141,10 @@ public class ProductViewModel extends AndroidViewModel {
 
     public LiveData<List<Product>> getProductsLiveData() {
         return mProductsLiveData;
+    }
+
+    public LiveData<Review> getReviewTestLiveData() {
+        return mReviewTestLiveData;
     }
 
     public List<String> getProductPrice() {
@@ -223,5 +229,9 @@ public class ProductViewModel extends AndroidViewModel {
 
     public void sendReview(int productId, String review, String reviewer, String reviewerEmail, int rating) {
         mRepository.sendReview(productId, review, reviewer, reviewerEmail, rating);
+    }
+
+    public void deleteReview(int id) {
+        mRepository.deleteReview(id);
     }
 }

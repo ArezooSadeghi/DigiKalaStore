@@ -11,7 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.ReviewAdapterItemBinding;
+import com.example.digikalastore.event.DeleteReviewEvent;
 import com.example.digikalastore.model.Review;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -38,6 +41,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewHold
     @Override
     public void onBindViewHolder(@NonNull ReviewHolder holder, int position) {
         holder.mBinding.setReview(mReviews.get(position));
+        holder.mBinding.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EventBus.getDefault().post(new DeleteReviewEvent());
+            }
+        });
     }
 
     @Override

@@ -31,4 +31,9 @@
     <string name="no_comment">نظری برای این محصول ثبت نشده است</string>
     <string name="submit_comment">ثبت نظر</string>
     <string name="see_all_comments">مشاهده همه نظرات</string>
+    <string name="reviewer_name_hint">نام</string>
+    <string name="reviewer_email_hint">آدرس ایمیل</string>
+    <string name="content_review_hint">متن نظر</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

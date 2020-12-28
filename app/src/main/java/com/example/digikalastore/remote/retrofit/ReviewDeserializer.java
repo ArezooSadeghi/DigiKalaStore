@@ -15,11 +15,12 @@ public class ReviewDeserializer implements JsonDeserializer<Review> {
     @Override
     public Review deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject reviewObject = json.getAsJsonObject();
+        int id = reviewObject.get("id").getAsInt();
         int productId = reviewObject.get("product_id").getAsInt();
         String reviewContent = Html.fromHtml(reviewObject.get("review").getAsString()).toString();
         String reviewerName = reviewObject.get("reviewer").getAsString();
         String reviewerEmail = reviewObject.get("reviewer_email").getAsString();
         int reviewRating = reviewObject.get("rating").getAsInt();
-        return new Review(productId, reviewContent, reviewerName, reviewerEmail, reviewRating);
+        return new Review(id, productId, reviewContent, reviewerName, reviewerEmail, reviewRating);
     }
 }

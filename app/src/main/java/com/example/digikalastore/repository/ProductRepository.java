@@ -47,6 +47,7 @@ public class ProductRepository {
     private MutableLiveData<List<String>> mProductPriceLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Review>> mReviewLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mProductsLiveData = new MutableLiveData<>();
+    private MutableLiveData<Review> mReviewTestLiveData = new MutableLiveData<>();
 
 
 
@@ -146,6 +147,10 @@ public class ProductRepository {
 
     public MutableLiveData<List<Product>> getProductsLiveData() {
         return mProductsLiveData;
+    }
+
+    public MutableLiveData<Review> getReviewTestLiveData() {
+        return mReviewTestLiveData;
     }
 
     public List<Product> getProductList() {
@@ -349,8 +354,25 @@ public class ProductRepository {
         call.enqueue(new Callback<Review>() {
             @Override
             public void onResponse(Call<Review> call, Response<Review> response) {
+                mReviewTestLiveData.setValue(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Review> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+    }
+
+
+    public void deleteReview(int id) {
+        Log.d("Arezoo", "man omadam");
+        Call<Review> call = mReviewService.deleteReview(id);
+        call.enqueue(new Callback<Review>() {
+            @Override
+            public void onResponse(Call<Review> call, Response<Review> response) {
                 if (response.isSuccessful()) {
-                    Log.d("Arezoo", response.body() + "");
+                    Log.d("Arezoo", "successful");
                 }
             }
 

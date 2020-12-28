@@ -14,112 +14,83 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
         tools:context=".view.fragment.ProductDetailFragment">
 
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.smarteist.autoimageslider.SliderView
+                android:id="@+id/img_product_slider"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                app:sliderAnimationDuration="1000"
+                app:sliderAutoCycleDirection="back_and_forth"
+                app:sliderAutoCycleEnabled="true"
+                app:sliderIndicatorAnimationDuration="1000"
+                app:sliderIndicatorEnabled="false"
+                app:sliderIndicatorGravity="left|bottom"
+                app:sliderIndicatorMargin="8dp"
+                app:sliderIndicatorOrientation="horizontal"
+                app:sliderIndicatorPadding="3dp"
+                app:sliderIndicatorRadius="2dp"
+                app:sliderIndicatorSelectedColor="@color/white"
+                app:sliderIndicatorUnselectedColor="@color/lightgray"
+                app:sliderScrollTimeInSec="2"
+                app:sliderStartAutoCycle="true">
+
+                <ImageView
+                    android:id="@+id/img_product"
+                    android:layout_width="wrap_content"
+                    android:layout_height="150dp"
+                    android:layout_marginBottom="16dp" />
+
+            </com.smarteist.autoimageslider.SliderView>
+
+            <TextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/specifications" />
+
+            <TextView
+                android:id="@+id/txt_product_description"
+                style="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:lineSpacingMultiplier="2"
+                android:maxLines="7"
+                android:text="@{product.description}" />
 
-                <com.smarteist.autoimageslider.SliderView
-                    android:id="@+id/img_product_slider"
-                    android:layout_width="match_parent"
-                    android:layout_height="170dp"
-                    android:layout_marginTop="16dp"
-                    app:sliderAnimationDuration="1000"
-                    app:sliderAutoCycleDirection="back_and_forth"
-                    app:sliderAutoCycleEnabled="true"
-                    app:sliderIndicatorAnimationDuration="1000"
-                    app:sliderIndicatorGravity="left|bottom"
-                    app:sliderIndicatorMargin="8dp"
-                    app:sliderIndicatorOrientation="horizontal"
-                    app:sliderIndicatorPadding="3dp"
-                    app:sliderIndicatorRadius="2dp"
-                    app:sliderIndicatorSelectedColor="@color/white"
-                    app:sliderIndicatorUnselectedColor="@color/lightgray"
-                    app:sliderScrollTimeInSec="2"
-                    app:sliderStartAutoCycle="true">
+            <Button
+                android:id="@+id/btn_see_comments"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/see_all_comments"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="18sp" />
 
-                    <ImageView
-                        android:id="@+id/img_product"
-                        android:layout_width="wrap_content"
-                        android:layout_height="150dp"
-                        android:layout_marginBottom="16dp" />
-
-                </com.smarteist.autoimageslider.SliderView>
-
-                <TextView
-                    style="@style/TextAppearance.MaterialComponents.Headline6"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/specifications" />
-
-                <TextView
-                    android:id="@+id/txt_product_description"
-                    style="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:lineSpacingMultiplier="1.5"
-                    android:lines="7"
-                    android:text="@{product.description}" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="right"
-                        android:layout_marginRight="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:text="@string/user_comments" />
-
-                    <Button
-                        android:id="@+id/btn_submit_comment"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:text="@string/see_all_comments" />
-
-                </FrameLayout>
-
-                <TextView
-                    android:id="@+id/txt_no_comment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/no_comment"
-                    android:textSize="18sp"
-                    android:visibility="gone" />
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" >
-
-                </HorizontalScrollView>
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btn_add_to_cart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="16dp"
-                    android:backgroundTint="@color/thistle"
-                    android:src="@drawable/ic_add_shopping"
-                    app:fabSize="normal" />
-
-            </LinearLayout>
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_add_to_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/thistle"
+                android:src="@drawable/ic_add_shopping"
+                app:fabSize="normal" />
 
             <RelativeLayout
                 android:id="@+id/show_detail_of_sale"
@@ -132,11 +103,10 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/custom_button"
-                    android:text="@string/number"
-                    android:textColor="@android:color/white" />
+                    android:text="@string/number" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -148,6 +118,8 @@
                     android:textSize="14sp" />
 
             </RelativeLayout>
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

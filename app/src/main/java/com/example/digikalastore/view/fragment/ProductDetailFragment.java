@@ -7,26 +7,20 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.ImageSliderAdapter;
-import com.example.digikalastore.adapter.ReviewAdapter;
 import com.example.digikalastore.databinding.FragmentProductDetailBinding;
 import com.example.digikalastore.event.Event;
 import com.example.digikalastore.model.Product;
-import com.example.digikalastore.model.Review;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.List;
 
 public class ProductDetailFragment extends Fragment {
 
@@ -34,8 +28,6 @@ public class ProductDetailFragment extends Fragment {
     private ProductViewModel mViewModel;
     private Product mProduct;
 
-    public ProductDetailFragment() {
-    }
 
     public static ProductDetailFragment newInstance() {
         ProductDetailFragment fragment = new ProductDetailFragment();
@@ -43,6 +35,7 @@ public class ProductDetailFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +45,7 @@ public class ProductDetailFragment extends Fragment {
 
         mViewModel = new ViewModelProvider(getActivity()).get(ProductViewModel.class);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,11 +57,9 @@ public class ProductDetailFragment extends Fragment {
                 container,
                 false);
 
-        initRecyclerView();
-        setListener();
-
         return mBinding.getRoot();
     }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -75,12 +67,23 @@ public class ProductDetailFragment extends Fragment {
         ProductDetailFragmentArgs args = ProductDetailFragmentArgs.fromBundle(getArguments());
         int productId = args.getProductId();
         mViewModel.retrieveProduct(productId);
-        mViewModel.fetchReviews(productId);
-        mViewModel.sendReview(productId, "Very Good", "Arezoo", "arezoo.sdghi@gmail.com", 4);
         setObserver();
+        setListener(productId);
     }
 
-    private void setListener() {
+
+    private void setObserver() {
+        mViewModel.getRetrieveProductLiveData().observe(getViewLifecycleOwner(), new Observer<Product>() {
+            @Override
+            public void onChanged(Product product) {
+                mProduct = product;
+                initViews(product);
+            }
+        });
+    }
+
+
+    private void setListener(int productId) {
         mBinding.btnAddToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,21 +94,14 @@ public class ProductDetailFragment extends Fragment {
                 mViewModel.getProductPrice().add(mProduct.getPrice());
             }
         });
-    }
 
-    private void setObserver() {
-        mViewModel.getRetrieveProductLiveData().observe(getViewLifecycleOwner(), new Observer<Product>() {
+        mBinding.btnSeeComments.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChanged(Product product) {
-                mProduct = product;
-                initViews(product);
-            }
-        });
-
-        mViewModel.getReviewLiveData().observe(getViewLifecycleOwner(), new Observer<List<Review>>() {
-            @Override
-            public void onChanged(List<Review> reviews) {
-                setupAdapter(reviews);
+            public void onClick(View view) {
+                ProductDetailFragmentDirections.ActionProductDetailFragmentToCommentPageFragment action =
+                        ProductDetailFragmentDirections.actionProductDetailFragmentToCommentPageFragment();
+                action.setProductId(productId);
+                NavHostFragment.findNavController(ProductDetailFragment.this).navigate(action);
             }
         });
     }
@@ -115,22 +111,5 @@ public class ProductDetailFragment extends Fragment {
         mBinding.setProduct(product);
         ImageSliderAdapter adapter = new ImageSliderAdapter(getContext(), product.getImageUrl());
         mBinding.imgProductSlider.setSliderAdapter(adapter);
-    }
-
-    private void initRecyclerView() {
-        mBinding.recyclerViewReviewProduct.setLayoutManager(new LinearLayoutManager(
-                getContext(),
-                RecyclerView.HORIZONTAL,
-                true));
-    }
-
-    private void setupAdapter(List<Review> reviews) {
-        if (reviews.size() == 0) {
-            mBinding.txtNoComment.setVisibility(View.VISIBLE);
-        } else {
-            mBinding.txtNoComment.setVisibility(View.GONE);
-        }
-        ReviewAdapter adapter = new ReviewAdapter(getContext(), reviews);
-        mBinding.recyclerViewReviewProduct.setAdapter(adapter);
     }
 }
