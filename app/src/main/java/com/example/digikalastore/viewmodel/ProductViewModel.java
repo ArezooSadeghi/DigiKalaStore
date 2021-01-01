@@ -6,9 +6,11 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.digikalastore.database.UserDatabase;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.model.Review;
+import com.example.digikalastore.model.customer.User;
 import com.example.digikalastore.repository.ProductRepository;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import io.reactivex.Observable;
 public class ProductViewModel extends AndroidViewModel {
 
     private ProductRepository mRepository;
+    private UserDatabase mDatabase;
     private List<Product> mProductList;
     private List<String> mProductPrice;
 
@@ -33,10 +36,6 @@ public class ProductViewModel extends AndroidViewModel {
     private LiveData<Review> mReviewTestLiveData;
 
 
-
-
-
-
     private LiveData<List<Product>> mProductByOrderLiveData;
     private LiveData<List<Product>> mProductsByCategoryLiveData;
 
@@ -45,19 +44,12 @@ public class ProductViewModel extends AndroidViewModel {
     private List<Product> mProducts;
 
 
-
-
-
-
-
-
-
-
     private LiveData<HashMap<String, List<Product>>> mResponseLiveData;
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
         mRepository = ProductRepository.getInstance(getApplication());
+        mDatabase = UserDatabase.getInstance(getApplication());
 
         mSearchingProductLiveData = mRepository.getSearchingProductLiveData();
         mProductByOrderLiveData = mRepository.getProductByOrderLiveData();
@@ -73,21 +65,13 @@ public class ProductViewModel extends AndroidViewModel {
         mProductPrice = mRepository.getProductPrice();
 
 
-
-
-
-
         mProductsByCategoryLiveData = mRepository.getProductsByCategoryLiveData();
 
         mRetrieveProductLiveData = mRepository.getRetrieveProductLiveData();
 
 
-
-
-
         mResponseLiveData = mRepository.getResponseLiveData();
     }
-
 
 
     public LiveData<Product> getRetrieveProductLiveData() {
@@ -105,10 +89,6 @@ public class ProductViewModel extends AndroidViewModel {
     public LiveData<HashMap<String, List<Product>>> getResponseLiveData() {
         return mResponseLiveData;
     }
-
-
-
-
 
 
     public LiveData<List<Category>> getCategoryLiveData() {
@@ -156,10 +136,6 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
 
-
-
-
-
     public Product getProduct(int productId) {
         return mRepository.getProduct(productId);
     }
@@ -173,11 +149,9 @@ public class ProductViewModel extends AndroidViewModel {
     }
 
 
-
     public void fetchProductsByCategory(int categoryId) {
         mRepository.fetchProductsByCategory(categoryId);
     }
-
 
 
     public void retrieveProduct(int productId) {
@@ -199,8 +173,6 @@ public class ProductViewModel extends AndroidViewModel {
     public Observable<List<Product>> getFeaturedProductsObservable() {
         return mRepository.getFeaturedProductsObservable();
     }
-
-
 
 
     public void fetchProducts() {
@@ -233,5 +205,31 @@ public class ProductViewModel extends AndroidViewModel {
 
     public void deleteReview(int id) {
         mRepository.deleteReview(id);
+    }
+
+    public void sendCustomer(String email) {
+        mRepository.sendCustomer(email);
+    }
+
+    public void insertUser(User user) {
+        mDatabase.getUserDao().insert(user);
+    }
+
+    public List<User> getUsers() {
+        return mDatabase.getUserDao().getUsers();
+    }
+
+    public boolean isValidUser(User myUser) {
+        List<User> users = mDatabase.getUserDao().getUsers();
+        if (users.size() == 0) {
+            return true;
+        } else {
+            for (User user : users) {
+                if (user.getEmail().equals(myUser.getEmail())) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

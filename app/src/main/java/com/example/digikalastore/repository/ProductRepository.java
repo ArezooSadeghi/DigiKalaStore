@@ -9,8 +9,12 @@ import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.model.Review;
+import com.example.digikalastore.model.customer.Billing;
+import com.example.digikalastore.model.customer.Customer;
+import com.example.digikalastore.model.customer.Shipping;
 import com.example.digikalastore.remote.retrofit.CategoryDeserializer;
 import com.example.digikalastore.remote.retrofit.CategoryService;
+import com.example.digikalastore.remote.retrofit.CustomerDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductListDeserializer;
 import com.example.digikalastore.remote.retrofit.ProductService;
@@ -37,7 +41,7 @@ public class ProductRepository {
     private Context mContext;
     private List<Product> mProductList;
     private List<String> mProductPrice;
-    private ProductService mReviewListService, mReviewService;
+    private ProductService mReviewListService, mReviewService, mCustomerService;
 
     private MutableLiveData<List<Product>> mProductByOrderLiveData = new MutableLiveData<>();
     private MutableLiveData<List<Product>> mSearchingProductLiveData = new MutableLiveData<>();
@@ -95,6 +99,10 @@ public class ProductRepository {
         mReviewService = RetrofitInstance.getRetrofitInstance(
                 new TypeToken<Review>() {}.getType(),
                 new ReviewDeserializer()).create(ProductService.class);
+
+        mCustomerService = RetrofitInstance.getRetrofitInstance(
+                new TypeToken<Customer>() {}.getType(),
+                new CustomerDeserializer()).create(ProductService.class);
 
         mContext = context.getApplicationContext();
 
@@ -397,6 +405,28 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
+    }
+
+
+    public void sendCustomer(String email) {
+        Call<Customer> call = mCustomerService.createCustomer(email);
+        call.enqueue(new Callback<Customer>() {
+            @Override
+            public void onResponse(Call<Customer> call, Response<Customer> response) {
+                Log.d("Arezoo", response.body() + "");
+                if (response.isSuccessful()) {
+                    Log.d("Arezoo", "customer send successful");
+                } else {
+                    Log.d("Arezoo", "customer send failed");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Customer> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+
     }
 
     public ArrayList<String> getChildItemList() {

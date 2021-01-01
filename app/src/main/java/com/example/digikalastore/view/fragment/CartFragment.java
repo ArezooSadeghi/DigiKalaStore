@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -60,6 +61,7 @@ public class CartFragment extends Fragment {
                 false);
 
         initRecyclerView();
+        setListener();
 
         return mBinding.getRoot();
     }
@@ -119,6 +121,17 @@ public class CartFragment extends Fragment {
         mBinding.recyclerViewCart.addItemDecoration(new DividerItemDecoration(
                 mBinding.recyclerViewCart.getContext(),
                 DividerItemDecoration.VERTICAL));
+    }
+
+    private void setListener() {
+        mBinding.btnContinueBuying.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment
+                        .findNavController(CartFragment.this)
+                        .navigate(R.id.action_cartFragment_to_createAccountFragment);
+            }
+        });
     }
 
     private void setupAdapter(List<Product> products) {

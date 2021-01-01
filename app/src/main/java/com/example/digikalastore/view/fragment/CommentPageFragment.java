@@ -19,8 +19,12 @@ import com.example.digikalastore.R;
 import com.example.digikalastore.adapter.ReviewAdapter;
 import com.example.digikalastore.databinding.FragmentCommentPageBinding;
 import com.example.digikalastore.model.Review;
+import com.example.digikalastore.model.customer.Billing;
+import com.example.digikalastore.model.customer.Customer;
+import com.example.digikalastore.model.customer.Shipping;
 import com.example.digikalastore.viewmodel.ProductViewModel;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class CommentPageFragment extends Fragment {
@@ -86,7 +90,6 @@ public class CommentPageFragment extends Fragment {
         mBinding.fabSubmitComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("Arezoo", "Come");
                 CommentPageFragmentDirections.ActionCommentPageFragmentToAddCommentFragment action =
                         CommentPageFragmentDirections.actionCommentPageFragmentToAddCommentFragment();
                 action.setProductId(productId);

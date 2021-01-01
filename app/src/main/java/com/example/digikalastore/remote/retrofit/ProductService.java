@@ -1,8 +1,14 @@
 package com.example.digikalastore.remote.retrofit;
 
+import androidx.media.VolumeProviderCompat;
+
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.model.Review;
+import com.example.digikalastore.model.customer.Billing;
+import com.example.digikalastore.model.customer.Customer;
+import com.example.digikalastore.model.customer.Shipping;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -10,6 +16,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -17,7 +24,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface  ProductService {
+public interface ProductService {
 
     @GET("products?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
@@ -77,4 +84,10 @@ public interface  ProductService {
     @DELETE("products/reviews/{id}?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
             "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
     Call<Review> deleteReview(@Path("id") int id);
+
+
+    @FormUrlEncoded
+    @POST("customers?consumer key=ck_3bc440296ce055c52b5b7e421a0d48654ce215dd & " +
+            "consumer secret=cs_a1062b3fc4224055d557cbc90a4323ca633f35aa")
+    Call<Customer> createCustomer(@Field("email") String email);
 }
