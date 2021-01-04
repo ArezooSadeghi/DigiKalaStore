@@ -16,4 +16,7 @@ public interface UserDao {
 
     @Query("select * from user_table")
     List<User> getUsers();
+
+    @Query("select * from user_table where email=:userEmail")
+    User getUser(String userEmail);
 }

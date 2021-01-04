@@ -44,6 +44,11 @@
     <string name="exist_user">کاربری با این ایمیل وجود دارد</string>
     <string name="register_successful">ثبت نام با موفقیت انجام شد</string>
     <string name="fill_required_fields">موارد خواسته شده را پر کنید</string>
+    <string name="wrong_username_or_email">ایمیل یا نام کاربری شما اشتباه می باشد</string>
+    <string name="empty_address_list">در حال حاضر آدرسی برای شما ثبت نشده است</string>
+    <string name="add_new_address">اضافه کردن آدرس جدید</string>
+    <string name="your_address">آدرس های شما</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

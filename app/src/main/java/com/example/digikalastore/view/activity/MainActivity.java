@@ -27,6 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 public class MainActivity extends AppCompatActivity {
 
     private static final String EXTRA_PRODUCT_ID = "com.example.digikalastore.productId";
+    public static final int REQUEST_ERROR = 0;
 
     private ActivityMainBinding mBinding;
     private NavController mNavController;
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         handleIntent();
     }
+
 
     @Override
     protected void onStart() {

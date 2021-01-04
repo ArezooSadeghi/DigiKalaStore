@@ -5,6 +5,7 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.digikalastore.database.UserDatabase;
 import com.example.digikalastore.model.Category;
@@ -34,6 +35,7 @@ public class ProductViewModel extends AndroidViewModel {
     private LiveData<List<Product>> mProductsLiveData;
     private LiveData<Integer> mTotalPageLiveData;
     private LiveData<Review> mReviewTestLiveData;
+    private MutableLiveData<List<String>> mUserAddressLiveData = new MutableLiveData<>();
 
 
     private LiveData<List<Product>> mProductByOrderLiveData;
@@ -127,6 +129,10 @@ public class ProductViewModel extends AndroidViewModel {
         return mReviewTestLiveData;
     }
 
+    public MutableLiveData<List<String>> getUserAddressLiveData() {
+        return mUserAddressLiveData;
+    }
+
     public List<String> getProductPrice() {
         return mProductPrice;
     }
@@ -213,6 +219,12 @@ public class ProductViewModel extends AndroidViewModel {
 
     public void insertUser(User user) {
         mDatabase.getUserDao().insert(user);
+    }
+
+    public User getUser(String userEmail) {
+        User user = mDatabase.getUserDao().getUser(userEmail);
+        mUserAddressLiveData.setValue(user.getAddresses());
+        return user;
     }
 
     public List<User> getUsers() {

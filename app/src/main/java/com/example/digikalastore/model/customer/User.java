@@ -4,17 +4,15 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(tableName = "user_table")
 public class User {
 
-    @NotNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private UUID mUserId;
+    private int mUserId;
     @ColumnInfo(name = "first_name")
     private String mFirstName;
     @ColumnInfo(name = "last_name")
@@ -23,25 +21,22 @@ public class User {
     private String mUserName;
     @ColumnInfo(name = "email")
     private String mEmail;
-
-    public User() {
-        mUserId = UUID.randomUUID();
-    }
+    @ColumnInfo(name = "address")
+    private List<String> mAddresses;
 
     public User(String firstName, String lastName, String userName, String email) {
         mFirstName = firstName;
         mLastName = lastName;
         mUserName = userName;
         mEmail = email;
-        mUserId = UUID.randomUUID();
+        mAddresses = new ArrayList<>();
     }
 
-    @NotNull
-    public UUID getUserId() {
+    public int getUserId() {
         return mUserId;
     }
 
-    public void setUserId(@NotNull UUID userId) {
+    public void setUserId(int userId) {
         mUserId = userId;
     }
 
@@ -75,5 +70,13 @@ public class User {
 
     public void setEmail(String email) {
         mEmail = email;
+    }
+
+    public List<String> getAddresses() {
+        return mAddresses;
+    }
+
+    public void setAddresses(List<String> addresses) {
+        mAddresses = addresses;
     }
 }
