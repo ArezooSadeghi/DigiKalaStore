@@ -4,11 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -64,6 +67,24 @@ public class MainActivity extends AppCompatActivity {
                         }
                         item.setChecked(true);
                         return true;
+                    }
+                });
+
+        mNavController.addOnDestinationChangedListener(
+                new NavController.OnDestinationChangedListener() {
+                    @Override
+                    public void onDestinationChanged(
+                            @NonNull NavController controller,
+                            @NonNull NavDestination destination,
+                            @Nullable Bundle arguments) {
+                        if (destination.getId() == R.id.createAccountFragment ||
+                                destination.getId() == R.id.registerFragment ||
+                                destination.getId() == R.id.addressFragment ||
+                                destination.getId() == R.id.getLocationFragment) {
+                            mBinding.bottomNavigationView.setVisibility(View.GONE);
+                        } else {
+                            mBinding.bottomNavigationView.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
         handleIntent();

@@ -136,5 +136,10 @@
         android:id="@+id/getLocationFragment"
         android:name="com.example.digikalastore.view.fragment.GetLocationFragment"
         android:label="fragment_get_location"
-        tools:layout="@layout/fragment_get_location" />
+        tools:layout="@layout/fragment_get_location" >
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue="user haven't any email" />
+    </fragment>
 </navigation>
