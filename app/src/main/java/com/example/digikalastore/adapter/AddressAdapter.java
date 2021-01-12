@@ -42,7 +42,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressH
 
     @Override
     public void onBindViewHolder(@NonNull AddressHolder holder, int position) {
-        holder.mBinding.setAddress(mAddresses.get(position));
+        holder.bindAddress(mAddresses.get(position));
     }
 
     @Override

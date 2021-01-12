@@ -38,9 +38,11 @@
     <string name="username_hint">نام کاربری</string>
     <string name="address_hint">آدرس</string>
     <string name="phone_hint">شماره تلفن همراه</string>
+    <string name="my_location">مکان من</string>
     <string name="continue_the_buying_process">ادامه فرایند خرید</string>
     <string name="login_to_digikala">ورود به دیجی کالا</string>
     <string name="register">ثبت نام</string>
+    <string name="confirmation">تایید</string>
     <string name="exist_user">کاربری با این ایمیل وجود دارد</string>
     <string name="register_successful">ثبت نام با موفقیت انجام شد</string>
     <string name="fill_required_fields">موارد خواسته شده را پر کنید</string>

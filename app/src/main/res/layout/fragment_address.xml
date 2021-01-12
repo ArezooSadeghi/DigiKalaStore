@@ -5,12 +5,6 @@
 
     <data>
 
-        <variable
-            name="address"
-            type="java.util.List" />
-
-        <import type="android.view.View" />
-
     </data>
 
     <LinearLayout
@@ -23,7 +17,7 @@
             android:id="@+id/toolbar_address"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
+            android:background="@color/primary_shrine_pink">
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -33,7 +27,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/your_address" />
+                    android:text="@string/your_address"
+                    android:textColor="@color/on_surface" />
 
             </FrameLayout>
 
@@ -46,28 +41,22 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_address"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="@{address.size() != 0 ? View.VISIBLE : View.GONE, default=visible}" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/empty_address_list"
-                android:visibility="@{address.size() == 0 ? View.VISIBLE : View.GONE, default=gone}" />
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/bottomAppBar"
                 style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                app:backgroundTint="@color/secondary_shrine_pink" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fab_add_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_location"
+                app:backgroundTint="@color/primary_shrine_pink"
                 app:layout_anchor="@id/bottomAppBar" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
