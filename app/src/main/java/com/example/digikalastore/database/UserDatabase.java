@@ -16,7 +16,6 @@ public abstract class UserDatabase extends RoomDatabase {
     public static final String DB_NAME = "user.db";
 
     private static UserDatabase sDatabase;
-    private Context mContext;
 
     public synchronized static UserDatabase getInstance(Context context) {
         if (sDatabase == null) {

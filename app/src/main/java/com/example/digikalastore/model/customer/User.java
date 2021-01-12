@@ -4,15 +4,18 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "user_table")
 public class User {
 
+    @NotNull
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    private int mUserId;
+    private int mId;
     @ColumnInfo(name = "first_name")
     private String mFirstName;
     @ColumnInfo(name = "last_name")
@@ -32,12 +35,12 @@ public class User {
         mAddresses = new ArrayList<>();
     }
 
-    public int getUserId() {
-        return mUserId;
+    public int getId() {
+        return mId;
     }
 
-    public void setUserId(int userId) {
-        mUserId = userId;
+    public void setId(int id) {
+        mId = id;
     }
 
     public String getFirstName() {
