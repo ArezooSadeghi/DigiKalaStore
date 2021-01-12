@@ -13,11 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.digikalastore.R;
 import com.example.digikalastore.databinding.FragmentRegisterBinding;
 import com.example.digikalastore.model.customer.User;
-import com.example.digikalastore.viewmodel.ProductViewModel;
+import com.example.digikalastore.viewmodel.RegisterViewModel;
 
 public class RegisterFragment extends Fragment {
+
+    private RegisterViewModel mViewModel;
     private FragmentRegisterBinding mBinding;
-    private ProductViewModel mViewModel;
 
     public static RegisterFragment newInstance() {
         RegisterFragment fragment = new RegisterFragment();
@@ -26,12 +27,14 @@ public class RegisterFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,6 +51,7 @@ public class RegisterFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+
     private void setListener() {
         mBinding.btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +60,10 @@ public class RegisterFragment extends Fragment {
                         mBinding.txtLastName.getText().toString().equals("") ||
                         mBinding.txtUsername.getText().toString().equals("") ||
                         mBinding.txtEmail.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), R.string.fill_required_fields, Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                            getContext(),
+                            R.string.fill_required_fields,
+                            Toast.LENGTH_LONG).show();
                 } else {
                     String firstName = mBinding.txtFirstName.getText().toString();
                     String lastName = mBinding.txtLastName.getText().toString();
@@ -65,9 +72,16 @@ public class RegisterFragment extends Fragment {
                     User user = new User(firstName, lastName, userName, email);
                     if (mViewModel.isValidUser(user)) {
                         mViewModel.insertUser(user);
-                        Toast.makeText(getContext(), R.string.register_successful, Toast.LENGTH_LONG).show();
+                        mViewModel.sendCustomer(email);
+                        Toast.makeText(
+                                getContext(),
+                                R.string.register_successful,
+                                Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getContext(), R.string.exist_user, Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                                getContext(),
+                                R.string.exist_user,
+                                Toast.LENGTH_LONG).show();
                     }
                 }
             }

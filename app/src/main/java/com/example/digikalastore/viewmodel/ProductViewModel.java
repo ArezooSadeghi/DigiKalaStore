@@ -213,10 +213,6 @@ public class ProductViewModel extends AndroidViewModel {
         mRepository.deleteReview(id);
     }
 
-    public void sendCustomer(String email) {
-        mRepository.sendCustomer(email);
-    }
-
     public void insertUser(User user) {
         mDatabase.getUserDao().insert(user);
     }
@@ -231,17 +227,4 @@ public class ProductViewModel extends AndroidViewModel {
         return mDatabase.getUserDao().getUsers();
     }
 
-    public boolean isValidUser(User myUser) {
-        List<User> users = mDatabase.getUserDao().getUsers();
-        if (users.size() == 0) {
-            return true;
-        } else {
-            for (User user : users) {
-                if (user.getEmail().equals(myUser.getEmail())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
 }

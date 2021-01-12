@@ -9,9 +9,7 @@ import com.example.digikalastore.R;
 import com.example.digikalastore.model.Category;
 import com.example.digikalastore.model.Product;
 import com.example.digikalastore.model.Review;
-import com.example.digikalastore.model.customer.Billing;
 import com.example.digikalastore.model.customer.Customer;
-import com.example.digikalastore.model.customer.Shipping;
 import com.example.digikalastore.remote.retrofit.CategoryDeserializer;
 import com.example.digikalastore.remote.retrofit.CategoryService;
 import com.example.digikalastore.remote.retrofit.CustomerDeserializer;
@@ -54,22 +52,12 @@ public class ProductRepository {
     private MutableLiveData<Review> mReviewTestLiveData = new MutableLiveData<>();
 
 
-
-
-
     private MutableLiveData<List<Product>> mProductsByCategoryLiveData = new MutableLiveData<>();
     private MutableLiveData<Product> mRetrieveProductLiveData = new MutableLiveData<>();
     private List<Product> mProducts;
     private ProductService mProductListService, mProductService;
     private CategoryService mCategoryService;
     private ProductService mDigiKalaServiceReview;
-
-
-
-
-
-
-
 
 
     private HashMap<String, List<Product>> mItems = new HashMap<>();
@@ -93,15 +81,18 @@ public class ProductRepository {
                 new CategoryDeserializer()).create(CategoryService.class);
 
         mReviewListService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<List<Review>>() {}.getType(),
+                new TypeToken<List<Review>>() {
+                }.getType(),
                 new ReviewListDeserializer()).create(ProductService.class);
 
         mReviewService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<Review>() {}.getType(),
+                new TypeToken<Review>() {
+                }.getType(),
                 new ReviewDeserializer()).create(ProductService.class);
 
         mCustomerService = RetrofitInstance.getRetrofitInstance(
-                new TypeToken<Customer>() {}.getType(),
+                new TypeToken<Customer>() {
+                }.getType(),
                 new CustomerDeserializer()).create(ProductService.class);
 
         mContext = context.getApplicationContext();
@@ -121,8 +112,6 @@ public class ProductRepository {
         }
         return sInstance;
     }
-
-
 
 
     public MutableLiveData<Integer> getTotalPageLiveData() {
@@ -170,15 +159,6 @@ public class ProductRepository {
     }
 
 
-
-
-
-
-
-
-
-
-
     public List<Product> getProducts() {
         return mProducts;
     }
@@ -196,14 +176,9 @@ public class ProductRepository {
     }
 
 
-
-
     public MutableLiveData<HashMap<String, List<Product>>> getResponseLiveData() {
         return mResponseLiveData;
     }
-
-
-
 
 
     public void fetchProductsByCategory(int categoryId) {
@@ -256,7 +231,6 @@ public class ProductRepository {
     }
 
 
-
     public void retrieveProduct(int productId) {
         Call<Product> call = mProductService.retrieveProduct(productId);
         call.enqueue(new Callback<Product>() {
@@ -288,8 +262,6 @@ public class ProductRepository {
     public Observable<List<Product>> getFeaturedProductsObservable() {
         return mProductListService.getAllProducts();
     }
-
-
 
 
     public void fetchCategories(int page) {
@@ -397,7 +369,7 @@ public class ProductRepository {
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-               mProductsLiveData.setValue(response.body());
+                mProductsLiveData.setValue(response.body());
             }
 
             @Override
@@ -409,16 +381,11 @@ public class ProductRepository {
 
 
     public void sendCustomer(String email) {
-        Call<Customer> call = mCustomerService.createCustomer(email);
+        Call<Customer> call = mCustomerService.sendCustomer(email);
         call.enqueue(new Callback<Customer>() {
             @Override
             public void onResponse(Call<Customer> call, Response<Customer> response) {
-                Log.d("Arezoo", response.body() + "");
-                if (response.isSuccessful()) {
-                    Log.d("Arezoo", "customer send successful");
-                } else {
-                    Log.d("Arezoo", "customer send failed");
-                }
+
             }
 
             @Override
@@ -426,8 +393,8 @@ public class ProductRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
-
     }
+
 
     public ArrayList<String> getChildItemList() {
         return new ArrayList<String>() {{
